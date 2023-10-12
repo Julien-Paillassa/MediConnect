@@ -1,6 +1,8 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc, { Options } from 'swagger-jsdoc';
+import db from './database';
+
 
 const app = express();
 const port = process.env.PORT || 3000;
