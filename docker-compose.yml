@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   mediconnect-db:
+    container_name: mediconnect-db
     image: postgres:latest
     volumes:
       - ./data/db:/var/lib/postgresql/data
@@ -11,6 +12,7 @@ services:
       POSTGRES_PASSWORD: postgres
 
   mediconnect-api:
+    container_name: mediconnect-api
     build: .
     volumes:
       - .:/opt/app
@@ -25,7 +27,8 @@ services:
     depends_on:
       - mediconnect-db
 
-  mediconnect-grafana:   
+  mediconnect-grafana:  
+    container_name: mediconnect-grafana 
     image: grafana/grafana:latest
     ports:
       - 3003:3003
