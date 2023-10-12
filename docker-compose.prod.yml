@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  mediconnect-db:
+    container_name: mediconnect-db
+    image: postgres:latest
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports: 
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  mediconnect-api:
+    container_name: mediconnect-api
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      DB_SCHEMA: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: postgres
+    depends_on:
+      - mediconnect-db
+
+  mediconnect-grafana:  
+    container_name: mediconnect-grafana 
+    image: grafana/grafana:latest
+    ports:
+      - 3003:3003
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    volumes:
+    - ./data/grafana:/var/lib/grafana
+    depends_on:
+      - mediconnect-api
