@@ -1,11 +1,9 @@
-import express from 'express';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc, { Options } from 'swagger-jsdoc';
-import db from './database';
+import express from 'express'
+import swaggerUi from 'swagger-ui-express'
+import swaggerJSDoc, { type Options } from 'swagger-jsdoc'
 
-
-const app = express();
-const port = process.env.PORT || 3000;
+const app = express()
+const port = (process.env.PORT != null) || 3000
 
 // Configuration Swagger JSDoc
 const swaggerDefinition = {
@@ -13,18 +11,18 @@ const swaggerDefinition = {
   info: {
     title: 'Votre API',
     version: '1.0.0',
-    description: 'Documentation de votre API',
-  },
-};
+    description: 'Documentation de votre API'
+  }
+}
 
 const options: Options = {
   swaggerDefinition,
-  apis: ['./routes/*.ts'],
-};
+  apis: ['./routes/*.ts']
+}
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(options)
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 /**
  * @swagger
@@ -37,9 +35,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *         description: Réponse réussie
  */
 app.get('/', (req, res) => {
-  res.send('Hello, Express with TypeScript!');
-});
+  res.send('Hello, Express with TypeScript!')
+})
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+  console.log(`Server is running on port ${port}`)
+})

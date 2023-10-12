@@ -1,15 +1,15 @@
-import pgPromise, { IMain } from 'pg-promise';
+import pgPromise, { type IMain } from 'pg-promise'
 
-const pgp: IMain = pgPromise({});
+const pgp: IMain = pgPromise({})
 
 const dbConfig = {
   host: 'localhost',
   port: 5432,
   database: 'mediconnect',
   user: 'postgres',
-  password: 'postgres',
-};
+  password: 'postgres'
+}
 
-const db = pgp(dbConfig);
+const db = pgp(dbConfig)
 
-export default db;
+export default db
