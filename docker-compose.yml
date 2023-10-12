@@ -12,6 +12,9 @@ services:
 
   mediconnect-api:
     build: .
+    volumes:
+      - .:/opt/app
+      - /opt/app/node_modules
     ports:
       - "3000:3000"
     environment:
@@ -21,3 +24,14 @@ services:
       DB_HOST: postgres
     depends_on:
       - mediconnect-db
+
+  mediconnect-grafana:   
+    image: grafana/grafana:latest
+    ports:
+      - 3003:3003
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    volumes:
+    - ./data/grafana:/var/lib/grafana
+    depends_on:
+      - mediconnect-api
