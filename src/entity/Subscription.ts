@@ -4,14 +4,14 @@ import { User } from './User'
 @Entity()
 export class Subscription {
   @PrimaryGeneratedColumn()
-  id!: number
+    id!: number
 
   @Column()
-  price!: number
+    price!: number
 
   @Column()
-  duration!: number
+    duration!: number
 
   @OneToMany(() => User, (user) => user.subscription)
-  users!: User[]
+    users!: User[]
 }

@@ -6,17 +6,17 @@ import { Subscription } from './Subscription'
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id!: number
+    id!: number
 
   @Column({ length: 100 })
-  name!: string
+    name!: string
 
   @Column({ length: 100 })
-  password!: string
+    password!: string
 
   @OneToMany(() => ApiKey, (apiKey) => apiKey.owner)
-  apiKeys!: ApiKey[]
+    apiKeys!: ApiKey[]
 
   @ManyToOne(() => Subscription, (subscritpion) => subscritpion.users)
-  subscription!: Subscription
+    subscription!: Subscription
 }
