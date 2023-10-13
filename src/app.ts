@@ -1,6 +1,8 @@
 import express from 'express'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc, { type Options } from 'swagger-jsdoc'
+import AppDataSource from './data-source'
+import 'reflect-metadata'
 
 const app = express()
 const port = (process.env.PORT != null) || 3000
@@ -23,6 +25,12 @@ const options: Options = {
 const swaggerSpec = swaggerJSDoc(options)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
+AppDataSource.initialize()
+  .then(() => {
+    // here you can start to work with your database
+  })
+  .catch((error) => { console.log(error) })
 
 /**
  * @swagger
