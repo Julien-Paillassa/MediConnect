@@ -1,11 +1,9 @@
-import express from 'express';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc, { Options } from 'swagger-jsdoc';
-import db from './database';
+import express, { type Express, type NextFunction, type Request, type Response } from 'express'
+import swaggerUi from 'swagger-ui-express'
+import swaggerJSDoc, { type Options } from 'swagger-jsdoc'
+import 'reflect-metadata'
 
-
-const app = express();
-const port = process.env.PORT || 3000;
+const app: Express = express()
 
 // Configuration Swagger JSDoc
 const swaggerDefinition = {
@@ -13,18 +11,18 @@ const swaggerDefinition = {
   info: {
     title: 'Votre API',
     version: '1.0.0',
-    description: 'Documentation de votre API',
-  },
-};
+    description: 'Documentation de votre API'
+  }
+}
 
 const options: Options = {
   swaggerDefinition,
-  apis: ['./routes/*.ts'],
-};
+  apis: ['./routes/*.ts']
+}
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(options)
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 /**
  * @swagger
@@ -36,10 +34,25 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       200:
  *         description: Réponse réussie
  */
-app.get('/', (req, res) => {
-  res.send('Hello, Express with TypeScript!');
-});
+app.get('/', (_: Request, res: Response) => {
+  res.send('Hello, Express with TypeScript!')
+})
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// Return 404 on unknown route
+app.all('*', (_req: Request, res: Response) => {
+  return res.status(404).send({
+    success: false,
+    message: 'Invalid route'
+  })
+})
+
+// Define a middleware function to handle errors
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.log(err)
+  return res.status(500).send({
+    success: false,
+    message: 'Internal server error'
+  })
+})
+
+export default app

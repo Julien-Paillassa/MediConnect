@@ -36,6 +36,16 @@ docker exec -it mediconnect-db sh
 docker exec -it mediconnect-grafana sh
 ```
 
+### Migrations
+Inside `mediconnect-api` container:
+
+```sh
+# Generate a migration
+npm run typeorm migrate:generate src/migrations/<migration-name> -- -d src/data-source.ts
+# Run migrations
+npm run typeorm migration:run -- -d src/data-source.ts
+```
+
 ### Stop all containers
 
 ```sh
