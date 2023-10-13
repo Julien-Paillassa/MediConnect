@@ -8,7 +8,7 @@ export class ApiKey {
     id!: number
 
   @Column()
-    key!: number
+    key!: string
 
   @Column({ length: 100 })
     name!: string

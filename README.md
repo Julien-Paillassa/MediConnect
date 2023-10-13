@@ -41,9 +41,19 @@ Inside `mediconnect-api` container:
 
 ```sh
 # Generate a migration
-npm run typeorm migrate:generate src/migrations/<migration-name> -- -d src/data-source.ts
+npm run typeorm migration:generate src/migrations/<migration-name>
 # Run migrations
-npm run typeorm migration:run -- -d src/data-source.ts
+npm run typeorm migration:run
+# Revert migrations
+npm run typeorm migration:revert
+# Show migrations status
+npm run typeorm migration:show
+```
+
+### Populate DB with datasets
+
+```sh
+npm run populate
 ```
 
 ### Stop all containers
