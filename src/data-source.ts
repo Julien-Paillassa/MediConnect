@@ -12,8 +12,9 @@ const AppDataSource = new DataSource({
   username: 'postgres',
   password: 'postgres',
   entities: ['src/entity/**/*.ts'],
-  migrations: ['src/migrations/*.ts'],
-  synchronize: true,
+  migrations: ['src/migrations/**/*.ts'],
+  migrationsRun: true,
+  synchronize: false,
   logging: Boolean(process.env.ORM_LOGGING) ?? false,
   subscribers: []
 })

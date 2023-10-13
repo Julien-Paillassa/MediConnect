@@ -5,14 +5,14 @@ import { User } from './User'
 @Unique(['key'])
 export class ApiKey {
   @PrimaryGeneratedColumn()
-    id!: number
+  id!: number
 
   @Column()
-    key!: string
+  key!: number
 
   @Column({ length: 100 })
-    name!: string
+  name!: string
 
   @ManyToOne(() => User, (user) => user.id)
-    owner!: User
+  owner!: User
 }

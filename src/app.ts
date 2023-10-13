@@ -39,7 +39,7 @@ app.get('/', (_: Request, res: Response) => {
 })
 
 // Return 404 on unknown route
-app.all('*', (_: Request, res: Response) => {
+app.all('*', (_req: Request, res: Response) => {
   return res.status(404).send({
     success: false,
     message: 'Invalid route'
@@ -47,7 +47,7 @@ app.all('*', (_: Request, res: Response) => {
 })
 
 // Define a middleware function to handle errors
-app.use((err: any, _: Request, res: Response, _: NextFunction) => {
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.log(err)
   return res.status(500).send({
     success: false,
