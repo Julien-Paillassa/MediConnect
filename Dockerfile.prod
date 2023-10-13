@@ -6,4 +6,4 @@ COPY package-lock.json /usr/src/app
 RUN npm ci
 COPY . /usr/src/app
 EXPOSE 3000
-CMD [ "ts-node", "src/app.ts"]
+CMD [ "ts-node", "src/index.ts"]

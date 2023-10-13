@@ -10,6 +10,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mediconnect
 
   mediconnect-api:
     container_name: mediconnect-api

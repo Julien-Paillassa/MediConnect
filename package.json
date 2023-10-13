@@ -4,8 +4,9 @@
   "description": "API d'informations de médicaments",
   "main": "index.js",
   "scripts": {
-    "start": "npm install && ts-node src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm install && ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "repository": {
     "type": "git",
