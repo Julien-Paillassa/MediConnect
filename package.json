@@ -8,7 +8,8 @@
     "start:prod": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typeorm": "typeorm-ts-node-commonjs -d src/data-source.ts",
-    "datasets:import": "mkdir -p logs && ts-node src/scripts/import-data-from-datasets.ts > logs/import-data-from-datasets.log"
+    "datasets:import": "mkdir -p logs && ts-node src/scripts/import-data-from-datasets.ts > logs/import-data-from-datasets.log",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,8 @@
   },
   "homepage": "https://github.com/Julien-Paillassa/MediConnect#readme",
   "devDependencies": {
+    "@commitlint/cli": "^17.8.0",
+    "@commitlint/config-conventional": "^17.8.0",
     "@types/express": "^4.17.19",
     "@types/node": "^20.8.4",
     "@types/swagger-jsdoc": "^6.0.1",
@@ -33,6 +36,7 @@
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
+    "husky": "^8.0.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "ts-node": "^10.9.1",
