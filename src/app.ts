@@ -1,7 +1,7 @@
 import express, { type Express, type NextFunction, type Request, type Response } from 'express'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc, { type Options } from 'swagger-jsdoc'
-import 'reflect-metadata';
+import 'reflect-metadata'
 
 const app: Express = express()
 

@@ -3,13 +3,6 @@
   "version": "1.0.0",
   "description": "API d'informations de médicaments",
   "main": "index.js",
-  "scripts": {
-    "start:dev": "npm install && nodemon --exec ts-node src/index.ts",
-    "start:prod": "ts-node src/index.ts",
-    "typeorm": "typeorm-ts-node-commonjs -d src/data-source.ts",
-    "datasets:import": "mkdir -p logs && ts-node src/scripts/import-data-from-datasets.ts > logs/import-data-from-datasets.log",
-    "prepare": "husky install"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Julien-Paillassa/MediConnect.git"
@@ -21,6 +14,17 @@
     "url": "https://github.com/Julien-Paillassa/MediConnect/issues"
   },
   "homepage": "https://github.com/Julien-Paillassa/MediConnect#readme",
+  "scripts": {
+    "start:dev": "npm install && nodemon --exec ts-node src/index.ts",
+    "start:prod": "ts-node src/index.ts",
+    "typeorm": "typeorm-ts-node-commonjs -d src/data-source.ts",
+    "datasets:import": "mkdir -p logs && ts-node src/scripts/import-data-from-datasets.ts > logs/import-data-from-datasets.log",
+    "prepare": "husky install",
+    "eslint": "eslint --ext .js,.jsx,.ts,.tsx src --color"
+  },
+  "lint-staged": {
+    "**/*.ts": "npm run eslint -- --fix"
+  },
   "devDependencies": {
     "@commitlint/cli": "^17.8.0",
     "@commitlint/config-conventional": "^17.8.0",
@@ -36,6 +40,7 @@
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
     "husky": "^8.0.3",
+    "lint-staged": "^15.0.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "ts-node": "^10.9.1",
