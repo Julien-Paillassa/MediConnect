@@ -36,6 +36,12 @@ docker exec -it mediconnect-db sh
 docker exec -it mediconnect-grafana sh
 ```
 
+To open a shell directly in the db container and connect to the db:
+
+```sh
+docker exec -it mediconnect-db psql -U postgres -d mediconnect
+```
+
 ### Migrations
 Inside `mediconnect-api` container:
 
@@ -50,11 +56,14 @@ npm run typeorm migration:revert
 npm run typeorm migration:show
 ```
 
-### Populate DB with datasets
+### Run seeds
 
 ```sh
-npm run populate
+docker cp ./src/scripts/seeds.sql mediconnect-db:/tmp/seeds.sql
+docker exec -it mediconnect-db /bin/bash -c 'psql -U postgres -d mediconnect < /tmp/seeds.sql'
+docker exec -it mediconnect-api /bin/bash -c 'npm run datasets:import'
 ```
+ℹ️ `npm run datasets:import` will import the datasets from the `datasets` folder.
 
 ### Stop all containers
 
