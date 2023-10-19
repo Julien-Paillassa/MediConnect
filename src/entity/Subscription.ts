@@ -6,11 +6,17 @@ export class Subscription {
   @PrimaryGeneratedColumn()
     id!: number
 
+  @Column({ length: 100 })
+    name!: string
+
   @Column()
     price!: number
 
   @Column()
-    duration!: number
+    ratePerMonth!: number
+
+  @Column()
+    overageFeePerRequest!: number
 
   @OneToMany(() => User, (user) => user.subscription)
     users!: User[]

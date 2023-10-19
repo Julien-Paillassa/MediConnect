@@ -7,7 +7,7 @@ export class ApiKey {
   @PrimaryGeneratedColumn()
     id!: number
 
-  @Column()
+  @Column({ length: 32, type: 'char', unique: true })
     key!: string
 
   @Column({ length: 100 })
