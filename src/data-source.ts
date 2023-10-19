@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv'
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
+import path = require('path')
 
 dotenv.config()
 
@@ -11,8 +12,8 @@ const AppDataSource = new DataSource({
   database: 'mediconnect',
   username: 'postgres',
   password: 'postgres',
-  entities: ['src/entity/**/*.ts'],
-  migrations: ['src/migrations/**/*.ts'],
+  entities: [path.join(__dirname, 'entity/**/*.{ts,js}')],
+  migrations: [path.join(__dirname, 'migrations/**/*.{ts,js}')],
   migrationsRun: true,
   synchronize: false,
   logging: Boolean(process.env.ORM_LOGGING) ?? false,

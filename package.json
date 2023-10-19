@@ -7,7 +7,8 @@
     "start:dev": "npm install && nodemon --exec ts-node src/index.ts",
     "start:prod": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs -d src/data-source.ts",
+    "datasets:import": "mkdir -p logs && ts-node src/scripts/import-data-from-datasets.ts > logs/import-data-from-datasets.log"
   },
   "repository": {
     "type": "git",
