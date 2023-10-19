@@ -13,6 +13,7 @@ import * as ResponseMiddleware from './middlewares/response.middleware'
 import * as ApiKeyMiddleware from './middlewares/api-key.middleware'
 
 const app: Express = express()
+app.use(express.json())
 
 app.use(express.json())
 app.use(cookieParser())
