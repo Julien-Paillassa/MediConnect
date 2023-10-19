@@ -10,12 +10,9 @@ export class User {
 
   @Column({ length: 100 })
     name!: string
-<<<<<<< HEAD
 
   @Column({ length: 100, unique: true })
     email!: string
-=======
->>>>>>> ec2d5f2 (CRUD user done)
 
   @Column({ length: 100 })
     password!: string

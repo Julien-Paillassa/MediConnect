@@ -16,12 +16,12 @@ router.get('/users', async (req: Request, res: Response) => {
 
 router.post('/users', async (req: Request, res: Response) => {
   try {
-    const { name, password } = req.body
+    const { name, email, password } = req.body
     if (name === null || password === null) {
       return res.status(400).json({ error: 'Le nom et le mot de passe sont requis.' })
     }
 
-    const user = await userServices.createUser(name, password)
+    const user = await userServices.createUser(name, email, password)
     if (user != null) {
       res.json(user)
     } else {

@@ -10,50 +10,29 @@ export default class UserServices {
     return await this.userRepository.find({ relations: ['subscription', 'apiKeys'] })
   }
 
-  public async createUser (name: string, password: string): Promise<User | undefined> {
+  public async createUser (name: string, email: string, password: string): Promise<User | undefined> {
     try {
       const newUser = new User()
       newUser.name = name
+      newUser.email = email
       newUser.password = password
-      // Récupérez la souscription par son ID, ou créez-en une nouvelle si elle n'existe pas.
+      // Récupérez la souscription par son ID
       const subscriptionId = 1
       const subscriptionRepository = AppDataSource.getRepository(Subscription)
-      const subscription = await subscriptionRepository.findOne({
+      const subscription = await subscriptionRepository.findOneOrFail({
         where: { id: subscriptionId }
       })
 
-      if (subscription === null) {
-        const newSubscription = new Subscription()
+      newUser.subscription = subscription
 
-        newSubscription.id = 1
-        newSubscription.price = 40
-        newSubscription.duration = 200
-
-        await subscriptionRepository.save(newSubscription)
-        newUser.subscription = newSubscription
-      } else {
-        newUser.subscription = subscription
-      }
-
-      // Récupérez la clé API par son ID, ou créez-en une nouvelle si elle n'existe pas.
+      // Récupérez la clé API par son ID
       const apiKeyId = 1
       const apiKeyRepository = AppDataSource.getRepository(ApiKey)
-      const apiKey = await apiKeyRepository.findOne({
+      const apiKey = await apiKeyRepository.findOneOrFail({
         where: { id: apiKeyId }
       })
 
-      if (apiKey === null) {
-        const newApiKey = new ApiKey()
-
-        newApiKey.id = 1
-        newApiKey.key = 1535866355
-        newApiKey.name = 'test apiKey'
-
-        await apiKeyRepository.save(newApiKey)
-        newUser.apiKeys = [newApiKey]
-      } else {
-        newUser.apiKeys = [apiKey]
-      }
+      newUser.apiKeys = [apiKey]
 
       const savedUser = await this.userRepository.save(newUser)
       return savedUser
