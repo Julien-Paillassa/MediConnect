@@ -31,7 +31,7 @@ services:
     container_name: mediconnect-grafana 
     image: grafana/grafana:latest
     ports:
-      - 3003:3003
+      - 3003:3000
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
     volumes:

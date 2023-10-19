@@ -77,3 +77,19 @@ npx eslint test.ts
 ```
 
 - <small> 'npx eslint .' pour tout check</small>
+
+## Grafana
+
+- <small>User : admin  / mdp : Azerty33!</small>
+
+Configurer Grafana :
+    - Search -> Data sources
+    - Add -> PostgreSQL
+
+Ajouter un graph avec Requete : 
+    - Dashboard -> add/edit panel -> Data source : PostgreSQL
+    - Créer sa requête
+    - Save
+
+Ajouter un graph avec End Point :
+    -
