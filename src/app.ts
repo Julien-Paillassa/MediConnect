@@ -2,7 +2,7 @@ import express, { type Express, type NextFunction, type Request, type Response }
 import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc, { type Options } from 'swagger-jsdoc'
 import 'reflect-metadata'
-import userRoutes from './resources/userResources'
+import userRoutes from './routes/userRoutes'
 
 const app: Express = express()
 app.use(express.json())
