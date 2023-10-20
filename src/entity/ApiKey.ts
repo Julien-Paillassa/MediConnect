@@ -7,7 +7,12 @@ export class ApiKey {
   @PrimaryGeneratedColumn()
     id!: number
 
-  @Column({ length: 32, type: 'char', unique: true })
+  @Column({
+    length: 32,
+    type: 'char',
+    unique: true,
+    default: () => 'md5(random()::text)'
+  })
     key!: string
 
   @Column({ length: 100 })

@@ -1,9 +1,13 @@
-import express, { type Express, type NextFunction, type Request, type Response } from 'express'
+import express, { type NextFunction, type Express, type Request, type Response } from 'express'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc, { type Options } from 'swagger-jsdoc'
+import apiKeysRouter from './routes/api-key.route'
 import 'reflect-metadata'
 
 const app: Express = express()
+app.use(express.json())
+
+app.use(apiKeysRouter)
 
 // Configuration Swagger JSDoc
 const swaggerDefinition = {
@@ -17,26 +21,12 @@ const swaggerDefinition = {
 
 const options: Options = {
   swaggerDefinition,
-  apis: ['./routes/*.ts']
+  apis: ['src/routes/*.route.ts']
 }
 
 const swaggerSpec = swaggerJSDoc(options)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-
-/**
- * @swagger
- * /:
- *   get:
- *     summary: Endpoint racine
- *     description: Renvoie un message de bienvenue
- *     responses:
- *       200:
- *         description: Réponse réussie
- */
-app.get('/', (_: Request, res: Response) => {
-  res.send('Hello, Express with TypeScript!')
-})
 
 // Return 404 on unknown route
 app.all('*', (_req: Request, res: Response) => {
