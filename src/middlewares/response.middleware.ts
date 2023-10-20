@@ -10,7 +10,7 @@ export function handleErrorResponse (err: any, _req: Request, res: Response, _ne
   } else if (err.status != null) {
     status = err.status
   }
-  res.status(status).send({ statusCode: status, message: err.message, error: err.name })
+  res.status(status).send({ statusCode: status, message: err.message })
 }
 
 export function invalidRouteResponse (_req: Request, res: Response): void {

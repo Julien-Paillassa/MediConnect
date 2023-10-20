@@ -84,7 +84,7 @@ const router = Router()
  *                   description: The total number of items
  *                   example: 1
  */
-router.post('/api-keys', ApiKeyController.create)
+router.post('/', ApiKeyController.create)
 
 /**
  * @swagger
@@ -112,7 +112,7 @@ router.post('/api-keys', ApiKeyController.create)
  *             schema:
  *               $ref: '#/components/schemas/ApiKey'
  */
-router.get('/api-keys', ApiKeyController.list)
+router.get('/', ApiKeyController.list)
 
 /**
  * @swagger
@@ -147,7 +147,7 @@ router.get('/api-keys', ApiKeyController.list)
  *       404:
  *         description: API key not found
  */
-router.put('/api-keys/:id', ApiKeyController.update)
+router.put('/:id', ApiKeyController.update)
 
 /**
  * @swagger
@@ -167,6 +167,6 @@ router.put('/api-keys/:id', ApiKeyController.update)
  *       404:
  *         description: API key not found
  */
-router.delete('/api-keys/:id', ApiKeyController.remove)
+router.delete('/:id', ApiKeyController.remove)
 
 export default router
