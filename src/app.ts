@@ -1,48 +1,25 @@
-import express, { type NextFunction, type Express, type Request, type Response } from 'express'
+import express, { type Express } from 'express'
 import swaggerUi from 'swagger-ui-express'
-import swaggerJSDoc, { type Options } from 'swagger-jsdoc'
+import swaggerJSDoc from 'swagger-jsdoc'
 import apiKeysRouter from './routes/api-key.route'
 import 'reflect-metadata'
+import * as ResponseMiddleware from './middlewares/response.middleware'
 
 const app: Express = express()
 app.use(express.json())
 
-app.use(apiKeysRouter)
-
-// Configuration Swagger JSDoc
-const swaggerDefinition = {
-  openapi: '3.0.0',
-  info: {
-    title: 'Votre API',
-    version: '1.0.0',
-    description: 'Documentation de votre API'
-  }
-}
-
-const options: Options = {
-  swaggerDefinition,
+const swaggerSpec = swaggerJSDoc({
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: { title: 'Mediconnect API', version: '1.0.0' }
+  },
   apis: ['src/routes/*.route.ts']
-}
-
-const swaggerSpec = swaggerJSDoc(options)
-
+})
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-// Return 404 on unknown route
-app.all('*', (_req: Request, res: Response) => {
-  return res.status(404).send({
-    success: false,
-    message: 'Invalid route'
-  })
-})
+app.use(apiKeysRouter)
+app.use(ResponseMiddleware.handleErrorResponse)
 
-// Define a middleware function to handle errors
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.log(err)
-  return res.status(500).send({
-    success: false,
-    message: 'Internal server error'
-  })
-})
+app.all('*', ResponseMiddleware.invalidRouteResponse)
 
 export default app

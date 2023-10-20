@@ -13,25 +13,20 @@ export async function list (page: number = 0, size: number = 10, filters: FindOp
   const query = AppDataSource.manager.createQueryBuilder(ApiKey, 'apiKey').where(filters)
   const total = await query.getCount()
   const [items, count] = await query.skip(size * page).take(size).getManyAndCount()
-
   return { total, page, count, items }
 }
 
 export async function create (data: DeepPartial<ApiKey>): Promise<ApiKey> {
   const apiKey = AppDataSource.manager.create(ApiKey, data)
-  const savedApiKey = await AppDataSource.manager.save(apiKey)
-  if (savedApiKey == null) throw new Error('Failed to create API key')
-  return savedApiKey as ApiKey
+  return (await AppDataSource.manager.save(apiKey)) as ApiKey
 }
 
 export async function update (apiKeyId: number, userId: number, data: DeepPartial<ApiKey>): Promise<ApiKey> {
   const apiKey = await AppDataSource.manager.findOneOrFail(ApiKey, {
     where: { id: apiKeyId, owner: { id: userId } }
   })
-
   AppDataSource.manager.merge(ApiKey, apiKey, data)
-  await AppDataSource.manager.save(apiKey)
-  return apiKey
+  return await AppDataSource.manager.save(apiKey)
 }
 
 export async function remove (apiKeyId: number, userId: number): Promise<void> {
