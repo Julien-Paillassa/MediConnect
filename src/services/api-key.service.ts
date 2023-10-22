@@ -1,19 +1,28 @@
-import { type DeepPartial, type FindOptionsWhere, type ObjectLiteral } from 'typeorm'
+import { type DeepPartial, type FindOptionsWhere } from 'typeorm'
 import AppDataSource from '../data-source'
 import { ApiKey } from '../entity/ApiKey'
+import { type PaginationData } from 'mediconnect'
 
-interface PaginationData<Entity extends ObjectLiteral> {
-  total: number
-  page: number
-  count: number
-  items: Entity[]
-}
+export async function list (
+  page: number = 0,
+  size: number = 10,
+  filters: FindOptionsWhere<ApiKey>
+): Promise<PaginationData<ApiKey>> {
+  const { name, ...otherFilters } = filters
 
-export async function list (page: number = 0, size: number = 10, filters: FindOptionsWhere<ApiKey>): Promise<PaginationData<ApiKey>> {
-  const query = AppDataSource.manager.createQueryBuilder(ApiKey, 'apiKey').where(filters)
-  const total = await query.getCount()
-  const [items, count] = await query.skip(size * page).take(size).getManyAndCount()
-  return { total, page, count, items }
+  const query = AppDataSource.manager
+    .createQueryBuilder(ApiKey, 'apiKey')
+    .where(otherFilters)
+
+  if (name !== null || name !== undefined) {
+    query.andWhere(
+      'unaccent(apiKey.name) ILIKE unaccent(:name)',
+      { name: `%${name as string}%` }
+    )
+  }
+
+  const [items, total] = await query.skip(size * page).take(size).getManyAndCount()
+  return { total, page, count: items.length, items }
 }
 
 export async function create (data: DeepPartial<ApiKey>): Promise<ApiKey> {

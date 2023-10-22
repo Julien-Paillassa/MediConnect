@@ -7,7 +7,6 @@ const router = Router()
  * @swagger
  * tags:
  *   - name: Api Key
- *     description: API Key management
  */
 
 /**
@@ -84,7 +83,7 @@ const router = Router()
  *                   description: The total number of items
  *                   example: 1
  */
-router.post('/', ApiKeyController.create)
+router.get('/', ApiKeyController.list)
 
 /**
  * @swagger
@@ -112,7 +111,7 @@ router.post('/', ApiKeyController.create)
  *             schema:
  *               $ref: '#/components/schemas/ApiKey'
  */
-router.get('/', ApiKeyController.list)
+router.post('/', ApiKeyController.create)
 
 /**
  * @swagger

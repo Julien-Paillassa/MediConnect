@@ -63,7 +63,7 @@ docker cp ./src/scripts/seeds.sql mediconnect-db:/tmp/seeds.sql
 docker exec -it mediconnect-db /bin/bash -c 'psql -U postgres -d mediconnect < /tmp/seeds.sql'
 docker exec -it mediconnect-api /bin/bash -c 'npm run datasets:import'
 ```
-ℹ️ `npm run datasets:import` will import the datasets from the `datasets` folder.
+ℹ️ `npm run datasets:import` will import the drug datasets from the `datasets` folder.
 
 ### Stop all containers
 
