@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc from 'swagger-jsdoc'
 import apiKeysRouter from './routes/api-key.route'
 import genericsRouter from './routes/generic.route'
+import drugSpecificationsRouter from './routes/drug-specification.route'
 import 'reflect-metadata'
 import * as ResponseMiddleware from './middlewares/response.middleware'
 import * as ApiKeyMiddleware from './middlewares/api-key.middleware'
@@ -23,9 +24,11 @@ const swaggerSpec = swaggerJSDoc({
           type: 'http',
           scheme: 'basic'
         }
-        // Unable to use cookie auth with swagger-ui-express,
-        // see https://github.com/scottie1984/swagger-ui-express/issues/299
-        // Adding instructions to set the cookie manually in the description of tags that require an API key
+        /**
+         * Unable to use cookie auth with swagger-ui-express,
+         * see https://github.com/scottie1984/swagger-ui-express/issues/299
+         * Adding instructions to set the cookie manually in the description of tags that require an API key
+         */
         // ApiKeyAuth: {
         //   type: 'apiKey',
         //   name: 'X-API-KEY',
@@ -61,7 +64,7 @@ app.use('/api-keys', apiKeysRouter)
 
 // paths protected by API key
 app.use('/generics', ApiKeyMiddleware.onlyValidApiKey, genericsRouter)
-// app.use('/drugs', ApiKeyMiddleware.onlyValidApiKey, drugsRouter)
+app.use('/drug-specifications', ApiKeyMiddleware.onlyValidApiKey, drugSpecificationsRouter)
 
 // error handling
 app.use(ResponseMiddleware.handleErrorResponse)

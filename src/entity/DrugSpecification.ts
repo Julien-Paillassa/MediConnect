@@ -28,7 +28,7 @@ export class DrugSpecification {
     form!: string
 
   @Column('simple-array')
-    deliveries!: string[]
+    administrations!: string[]
 
   @Column(
     {
@@ -44,8 +44,8 @@ export class DrugSpecification {
   @Column()
     isBeingMarketed!: boolean
 
-  @Column()
-    marketingAuthorizationDate!: string
+  @Column({ type: 'timestamptz' })
+    marketingAuthorizationDate!: Date
 
   @Column({
     type: 'enum',

@@ -39,8 +39,8 @@ export class DrugPackage {
   })
     marketingAuthorizationStatus!: MarketingAuthorizationDeclarationStatus
 
-  @Column()
-    marketingAuthorizationDeclarationDate!: string
+  @Column({ type: 'timestamptz' })
+    marketingAuthorizationDeclarationDate!: Date
 
   @Column()
     isAgreedToCommunities?: boolean

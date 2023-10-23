@@ -1,11 +1,12 @@
 import * as fs from 'fs'
-import { DrugSpecification, type MarketingAuthorizationStatus, type OriginalDatabaseStatus } from '../entity/DrugSpecification'
-import AppDataSource from '../data-source'
-import { DrugPackage, MarketingAuthorizationDeclarationStatus, type PackageStatus } from '../entity/DrugPackage'
-import { DrugComposition, type SubstanceNatureType } from '../entity/DrugComposition'
-import { Generic } from '../entity/Generic'
+import moment from 'moment'
 import path from 'path'
+import AppDataSource from '../data-source'
+import { DrugComposition, type SubstanceNatureType } from '../entity/DrugComposition'
 import { DrugGeneric, type GenericType } from '../entity/DrugGeneric'
+import { DrugPackage, MarketingAuthorizationDeclarationStatus, type PackageStatus } from '../entity/DrugPackage'
+import { DrugSpecification, type MarketingAuthorizationStatus, type OriginalDatabaseStatus } from '../entity/DrugSpecification'
+import { Generic } from '../entity/Generic'
 
 const CHUNK_SIZE = 2500
 
@@ -24,11 +25,11 @@ const importDrugSpecificationData = async (): Promise<void> => {
         drugSpecification.id = Number(fields[0])
         drugSpecification.name = fields[1]
         drugSpecification.form = fields[2]
-        drugSpecification.deliveries = fields[3].split(';')
+        drugSpecification.administrations = fields[3].split(';')
         drugSpecification.marketingAuthorizationStatus = fields[4] as MarketingAuthorizationStatus
         drugSpecification.marketingAuthorizationProcedure = fields[5]
         drugSpecification.isBeingMarketed = fields[6] === 'Commercialisée'
-        drugSpecification.marketingAuthorizationDate = fields[7]
+        drugSpecification.marketingAuthorizationDate = moment.utc(fields[7], 'DD/MM/YYYY').toDate()
         if (fields[8] !== '') drugSpecification.ogDbStatus = fields[8] as OriginalDatabaseStatus
         drugSpecification.europeanAuthorizationNumber = fields[9]
         drugSpecification.holders = fields[10].split(';')
@@ -74,7 +75,7 @@ const importDrugPackageData = async (): Promise<void> => {
           .replace("Déclaration d'arrêt de commercialisation", MarketingAuthorizationDeclarationStatus.STOPPED)
           .replace('(le médicament n\'a plus d\'autorisation)', 'pour autorisation retirée')
         drugPackage.marketingAuthorizationStatus = status as MarketingAuthorizationDeclarationStatus
-        drugPackage.marketingAuthorizationDeclarationDate = fields[5]
+        drugPackage.marketingAuthorizationDeclarationDate = moment.utc(fields[5], 'DD/MM/YYYY').toDate()
         drugPackage.isAgreedToCommunities = fields[7] === 'Oui'
         if (!isNaN(Number(fields[8]))) drugPackage.refundRate = Number(fields[8])
         if (!isNaN(Number(fields[10])))drugPackage.price = Number(fields[10])
