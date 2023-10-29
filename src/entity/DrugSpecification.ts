@@ -30,12 +30,7 @@ export class DrugSpecification {
   @Column('simple-array')
     administrations!: string[]
 
-  @Column(
-    {
-      type: 'enum',
-      enum: MarketingAuthorizationStatus
-    }
-  )
+  @Column({ type: 'enum', enum: MarketingAuthorizationStatus })
     marketingAuthorizationStatus!: MarketingAuthorizationStatus
 
   @Column()
@@ -47,11 +42,7 @@ export class DrugSpecification {
   @Column({ type: 'timestamptz' })
     marketingAuthorizationDate!: Date
 
-  @Column({
-    type: 'enum',
-    enum: OriginalDatabaseStatus,
-    nullable: true
-  })
+  @Column({ type: 'enum', enum: OriginalDatabaseStatus, nullable: true })
     ogDbStatus?: OriginalDatabaseStatus
 
   @Column({ nullable: true })
@@ -67,10 +58,10 @@ export class DrugSpecification {
     packages!: DrugPackage[]
 
   @OneToMany(() => DrugComposition, (composition) => composition.drug)
-    compositions?: DrugComposition[]
+    compositions!: DrugComposition[]
 
   @OneToMany(() => DrugGeneric, (generic) => generic.drug)
-    generics?: DrugGeneric[]
+    generics!: DrugGeneric[]
 
   @Column({ nullable: true })
     prescriptionRestriction?: string

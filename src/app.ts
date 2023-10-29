@@ -4,7 +4,9 @@ import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc from 'swagger-jsdoc'
 import apiKeysRouter from './routes/api-key.route'
 import genericsRouter from './routes/generic.route'
+import drugGenericsRouter from './routes/drug-generic.route'
 import drugSpecificationsRouter from './routes/drug-specification.route'
+import drugPackagesRouter from './routes/drug-package.route'
 import 'reflect-metadata'
 import * as ResponseMiddleware from './middlewares/response.middleware'
 import * as ApiKeyMiddleware from './middlewares/api-key.middleware'
@@ -64,7 +66,9 @@ app.use('/api-keys', apiKeysRouter)
 
 // paths protected by API key
 app.use('/generics', ApiKeyMiddleware.onlyValidApiKey, genericsRouter)
+app.use('/drug-generics', ApiKeyMiddleware.onlyValidApiKey, drugGenericsRouter)
 app.use('/drug-specifications', ApiKeyMiddleware.onlyValidApiKey, drugSpecificationsRouter)
+app.use('/drug-packages', ApiKeyMiddleware.onlyValidApiKey, drugPackagesRouter)
 
 // error handling
 app.use(ResponseMiddleware.handleErrorResponse)

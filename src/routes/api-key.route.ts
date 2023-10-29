@@ -77,7 +77,7 @@ const router = Router()
  *                 page:
  *                   type: number
  *                   description: The current page number
- *                   example: 1
+ *                   example: 0
  *                 total:
  *                   type: number
  *                   description: The total number of items

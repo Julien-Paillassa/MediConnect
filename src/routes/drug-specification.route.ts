@@ -160,18 +160,18 @@ const router = Router()
  *         schema:
  *           type: boolean
  *         description: The filter on the is being marketed
- *       - name: marketingAuthorizationOldestDate
+ *       - name: marketingAuthorizationDateMin
  *         in: query
  *         schema:
  *           type: string
- *         description: The oldest date of the marketing authorization
+ *         description: The minimum date of the marketing authorization
  *         example: 2002-07-09T00:00:00.000Z
- *       - name: marketingAuthorizationLatestDate
+ *       - name: marketingAuthorizationDateMax
  *         in: query
  *         schema:
  *              type: string
  *         description: The maximum date of the marketing authorization
- *         example: 2022-07-09T00:00:00.000Z
+ *         example: 2022-07-09T23:59:59.999Z
  *       - name: ogDbStatus
  *         in: query
  *         schema:
@@ -225,7 +225,7 @@ const router = Router()
  *                 page:
  *                   type: number
  *                   description: The current page number
- *                   example: 1
+ *                   example: 0
  *                 total:
  *                   type: number
  *                   description: The total number of items

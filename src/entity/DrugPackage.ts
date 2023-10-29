@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm'
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm'
 import { DrugSpecification } from './DrugSpecification'
 
 export enum PackageStatus {
@@ -21,22 +21,20 @@ export class DrugPackage {
   @Column({ type: 'bigint' })
     longId!: number
 
+  @Column({ nullable: true })
+    drugId?: number
+
   @ManyToOne(() => DrugSpecification, (drug) => drug.id)
+  @JoinColumn({ name: 'drugId' })
     drug!: DrugSpecification
 
   @Column()
     name!: string
 
-  @Column({
-    type: 'enum',
-    enum: PackageStatus
-  })
+  @Column({ type: 'enum', enum: PackageStatus })
     status!: PackageStatus
 
-  @Column({
-    type: 'enum',
-    enum: MarketingAuthorizationDeclarationStatus
-  })
+  @Column({ type: 'enum', enum: MarketingAuthorizationDeclarationStatus })
     marketingAuthorizationStatus!: MarketingAuthorizationDeclarationStatus
 
   @Column({ type: 'timestamptz' })

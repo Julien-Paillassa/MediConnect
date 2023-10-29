@@ -12,7 +12,8 @@ export function applyFiltersOnSelectQuery<Entity extends ObjectLiteral> (
   const metadata = AppDataSource.manager.connection.getMetadata(entity)
 
   Object.entries(filters).forEach(([key, value]) => {
-    const field = key.replace('Latest', '').replace('Oldest', '')
+    // Remove min/max suffix
+    const field = key.replace(/(Min|Max)$/, '')
 
     const columnPath = (relationship != null) ? `${relationship}.${field}` : field
     if (excludeColumns.includes(columnPath)) return
@@ -47,17 +48,25 @@ export function applyFiltersOnSelectQuery<Entity extends ObjectLiteral> (
         }
         break
       case 'Number':
-        query.andWhere({ [columnPath]: Number(value) })
+        if (key.endsWith('Min')) {
+          query.andWhere({ [columnPath]: MoreThanOrEqual(Number(value)) })
+        } else if (key.endsWith('Max')) {
+          query.andWhere({ [columnPath]: LessThanOrEqual(Number(value)) })
+        } else {
+          query.andWhere({ [columnPath]: Number(value) })
+        }
         break
       case 'Boolean':
         query.andWhere({ [columnPath]: value === 'true' || value === true || value === '1' || value === 1 })
         break
       case 'timestamptz':
         if (value === '') break
-        if (key.includes('Latest')) {
-          query.andWhere({ [columnPath]: LessThanOrEqual(moment(value).toDate()) })
-        } else if (key.includes('Oldest')) {
+        if (key.startsWith('Min')) {
           query.andWhere({ [columnPath]: MoreThanOrEqual(moment(value).toDate()) })
+        } else if (key.startsWith('Max')) {
+          query.andWhere({ [columnPath]: LessThanOrEqual(moment(value).toDate()) })
+        } else {
+          query.andWhere({ [columnPath]: moment(value).toDate() })
         }
         break
       case 'simple-array':

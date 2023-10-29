@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm'
 import { DrugSpecification } from './DrugSpecification'
 
 export enum SubstanceNatureType {
@@ -11,7 +11,12 @@ export class DrugComposition {
   @PrimaryGeneratedColumn()
     id!: number
 
+  // https://typeorm.io/relations-faq#how-to-use-relation-id-without-joining-relation
+  @Column({ nullable: true })
+    drugId?: number
+
   @ManyToOne(() => DrugSpecification, (drug) => drug.id)
+  @JoinColumn({ name: 'drugId' })
     drug!: DrugSpecification
 
   @Column()
@@ -29,10 +34,7 @@ export class DrugComposition {
   @Column({ nullable: true })
     substanceDosageReference?: string
 
-  @Column({
-    type: 'enum',
-    enum: SubstanceNatureType
-  })
+  @Column({ type: 'enum', enum: SubstanceNatureType })
     substanceNature!: SubstanceNatureType
 
   @Column()
