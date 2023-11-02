@@ -46,43 +46,7 @@ const router = Router()
 
 /**
  * @swagger
- * /users:
- *   post:
- *     tags: ['User']
- *     summary: Create a new user
- *     description: Create a new user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 description: User's name
- *                 example: Toto
- *               email:
- *                 type: string
- *                 description: User's email
- *                 example: Toto@gmail.com
- *               password:
- *                 type: string
- *                 description: User's password
- *                 example: azerty
- *     responses:
- *       201:
- *         description: The created user
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- */
-router.post('/', UserController.create)
-
-/**
- * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   put:
  *     tags: ['User']
  *     summary: Update an user
@@ -121,11 +85,11 @@ router.post('/', UserController.create)
  *       404:
  *         description: User not found
  */
-router.put('/:id', UserController.update)
+router.put('/', UserController.update)
 
 /**
  * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   delete:
  *     tags: ['User']
  *     summary: Delete an User
@@ -141,6 +105,6 @@ router.put('/:id', UserController.update)
  *       404:
  *         description: API key not found
  */
-router.delete('/:id', UserController.remove)
+router.delete('/', UserController.remove)
 
 export default router
