@@ -1,41 +1,44 @@
-import { Request, Response, NextFunction } from 'express';
-import AppDataSource from "../data-source";
-import jwt from 'jsonwebtoken';
-import { User } from '../entity/User';
+import { type Request, type Response, type NextFunction } from 'express'
+import AppDataSource from '../data-source'
+import jwt from 'jsonwebtoken'
 
 declare module 'express-serve-static-core' {
-    interface Request {
-        currentUser?: any;
-    }
+  interface Request {
+    currentUser?: any
+  }
 }
 
-export default async (req: Request, res: Response, next: NextFunction) => {
-    const authorizationHeader = req.headers['authorization'];
-    let token;
+export function authenticate (req: Request, res: Response, next: NextFunction): void {
+  const authorizationHeader = req.headers.authorization
+  let token
 
-    if (authorizationHeader) {
-        token = authorizationHeader.split(' ')[1];
+  if (authorizationHeader != null) {
+    token = authorizationHeader.split(' ')[1]
+  }
+
+  if (token != null) {
+    if (process.env.TOKEN_SECRET_KEY == null) {
+      throw new Error('TOKEN_SECRET_KEY is not defined')
     }
-
-    if (token) {
-        jwt.verify(token, process.env.TOKEN_SECRET_KEY!, (err, decoded: any) => {
-            if (err) {
-                res.status(401).json({ error: 'You are not authorized to perform this operation!' });
+    jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err, decoded: any) => {
+      if (err != null) {
+        res.status(401).send({ statusCode: 401, message: 'You are not authorized to perform this operation!' })
+      } else {
+        AppDataSource.manager.findOneByOrFail('User', { where: { id: decoded.id } })
+          .then((user) => {
+            if (user === null) {
+              res.status(404).send({ statusCode: 404, message: 'No such user' })
             } else {
-                const userRepository = AppDataSource.manager.getRepository(User);
-                userRepository.findOne({ where: { id: decoded.id }, select: ['email', 'id'] }).then(user => {
-                    if (!user) {
-                        res.status(404).json({ error: 'No such user' });
-                    } else {
-                        req.currentUser = user;
-                        next();
-                    }
-                });
+              req.currentUser = user
+              next()
             }
-        });
-    } else {
-        res.status(403).json({
-            error: 'No token provided'
-        });
-    }
-};
+          })
+          .catch((error) => {
+            next(error)
+          })
+      }
+    })
+  } else {
+    res.status(403).send({ statusCode: 403, message: 'No token provided' })
+  }
+}

@@ -1,7 +1,7 @@
-import express, { Request, Response, Router } from 'express';
-import * as authCtrl from '../controllers/auth.controller';
+import express, { type Request, type Response, type Router } from 'express'
+import * as authCtrl from '../controllers/auth.controller'
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
 /**
  * @swagger
@@ -77,7 +77,7 @@ const router: Router = express.Router();
  */
 
 router.post('/login', (req: Request, res: Response) => {
-    authCtrl.login(req, res);
-});
+  authCtrl.login(req, res)
+})
 
-export default router;
+export default router

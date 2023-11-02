@@ -2,7 +2,7 @@ import express, { type Express, type NextFunction, type Request, type Response }
 import swaggerUi from 'swagger-ui-express'
 import swaggerJSDoc, { type Options } from 'swagger-jsdoc'
 import 'reflect-metadata'
-import userRoutes from './routes/userRoutes'
+import usersRouter from './routes/user.route'
 
 const app: Express = express()
 app.use(express.json())
@@ -41,7 +41,7 @@ app.get('/', (_: Request, res: Response) => {
   res.send('Hello, Express with TypeScript!!!! ')
 })
 
-app.use('/api', userRoutes)
+app.use('/users', usersRouter)
 
 // Return 404 on unknown route
 app.all('*', (_req: Request, res: Response) => {
