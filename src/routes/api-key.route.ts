@@ -7,7 +7,6 @@ const router = Router()
  * @swagger
  * tags:
  *   - name: Api Key
- *     description: API Key management
  */
 
 /**
@@ -54,6 +53,16 @@ const router = Router()
  *         schema:
  *           type: number
  *         description: The page size
+ *       - name: sort
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: The field to sort on
+ *       - name: order
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: The order to sort on (ASC or DESC)
  *       - name: name
  *         in: query
  *         schema:
@@ -78,13 +87,13 @@ const router = Router()
  *                 page:
  *                   type: number
  *                   description: The current page number
- *                   example: 1
+ *                   example: 0
  *                 total:
  *                   type: number
  *                   description: The total number of items
  *                   example: 1
  */
-router.post('/', ApiKeyController.create)
+router.get('/', ApiKeyController.list)
 
 /**
  * @swagger
@@ -112,7 +121,7 @@ router.post('/', ApiKeyController.create)
  *             schema:
  *               $ref: '#/components/schemas/ApiKey'
  */
-router.get('/', ApiKeyController.list)
+router.post('/', ApiKeyController.create)
 
 /**
  * @swagger
