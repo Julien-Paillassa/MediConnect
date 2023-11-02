@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Unique } from 'typeorm'
+import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, ManyToOne, Unique } from 'typeorm'
 import { User } from './User'
 
 @Entity()
@@ -17,6 +17,12 @@ export class ApiKey {
 
   @Column({ length: 100 })
     name!: string
+
+  @CreateDateColumn()
+    createdAt!: Date
+
+  @Column({ type: 'timestamptz' })
+    expiresAt!: Date
 
   @ManyToOne(() => User, (user) => user.id)
     owner!: User

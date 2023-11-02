@@ -41,7 +41,7 @@ const router = Router()
  *           description: The substance dosage reference
  *         substanceNature:
  *           type: string
- *           description: The substance nature (SA: Active substance, FT: Theurapeutic moiety)
+ *           description: 'The substance nature (SA :: Active substance, FT :: Theurapeutic moiety)'
  *           enum:
  *             - 'SA'
  *             - 'FT'
@@ -127,7 +127,7 @@ const router = Router()
  *             enum:
  *               - 'SA'
  *               - 'FT'
- *         description: The filter on the susbtance nature (SA: Active substance, FT: Theurapeutic moiety)
+ *         description: 'The filter on the susbtance nature (SA:: Active substance, FT:: Theurapeutic moiety)'
  *       - name: substancesLinkNumber
  *         in: query
  *         schema:
