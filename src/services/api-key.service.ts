@@ -1,5 +1,5 @@
-import { type PaginationData } from 'mediconnect'
-import { type DeepPartial } from 'typeorm'
+import { type order, type PaginationData } from 'mediconnect'
+import { type ObjectLiteral, type DeepPartial } from 'typeorm'
 import AppDataSource from '../data-source'
 import { ApiKey } from '../entity/ApiKey'
 import { applyFiltersOnSelectQuery } from '../utils/query'
@@ -7,11 +7,18 @@ import { applyFiltersOnSelectQuery } from '../utils/query'
 export async function list (
   page: number = 0,
   size: number = 10,
-  filters: Record<string, any>
+  sort: string = 'id',
+  order: order = 'ASC',
+  filters: ObjectLiteral
 ): Promise<PaginationData<ApiKey>> {
-  const query = AppDataSource.manager.createQueryBuilder(ApiKey, 'api_key')
+  const aliasName = AppDataSource.manager.connection.getMetadata(ApiKey).tableName
+  const query = AppDataSource.manager.createQueryBuilder(ApiKey, aliasName)
   const queryWithFilters = applyFiltersOnSelectQuery(ApiKey, query, filters)
-  const [items, total] = await queryWithFilters.skip(size * page).take(size).getManyAndCount()
+  const [items, total] = await queryWithFilters
+    .orderBy(`${aliasName}.${sort}`, order, 'NULLS LAST')
+    .skip(size * page)
+    .take(size)
+    .getManyAndCount()
   return { total, page, count: items.length, items }
 }
 

@@ -1,17 +1,24 @@
-import { type FindOptionsWhere } from 'typeorm'
+import { type ObjectLiteral } from 'typeorm'
 import AppDataSource from '../data-source'
-import { type PaginationData } from 'mediconnect'
+import { type order, type PaginationData } from 'mediconnect'
 import { applyFiltersOnSelectQuery } from '../utils/query'
 import { DrugGeneric } from '../entity/DrugGeneric'
 
 export async function list (
   page: number = 0,
   size: number = 10,
-  filters: FindOptionsWhere<DrugGeneric>
+  sort: string = 'id',
+  order: order = 'ASC',
+  filters: ObjectLiteral
 ): Promise<PaginationData<DrugGeneric>> {
-  const query = AppDataSource.manager.createQueryBuilder(DrugGeneric, 'drug_generic')
+  const aliasName = AppDataSource.manager.connection.getMetadata(DrugGeneric).tableName
+  const query = AppDataSource.manager.createQueryBuilder(DrugGeneric, aliasName)
   const queryWithFilters = applyFiltersOnSelectQuery(DrugGeneric, query, filters)
-  const [items, total] = await queryWithFilters.skip(size * page).take(size).getManyAndCount()
+  const [items, total] = await queryWithFilters
+    .orderBy(`${aliasName}.${sort}`, order, 'NULLS LAST')
+    .skip(size * page)
+    .take(size)
+    .getManyAndCount()
   return { total, page, count: items.length, items }
 }
 

@@ -120,6 +120,16 @@ const router = Router()
  *         schema:
  *           type: number
  *         description: The page size
+ *       - name: sort
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: The field to sort on
+ *       - name: order
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: The order to sort on (ASC or DESC)
  *       - name: name
  *         in: query
  *         schema:
@@ -188,12 +198,6 @@ const router = Router()
  *         schema:
  *           type: string
  *         description: The filter on the european authorization number
- *       - name: holdersOrAnd
- *         in: query
- *         schema:
- *           type: string
- *           enum: ['or', 'and']
- *         description: The filter on the holders
  *       - name: holders
  *         in: query
  *         schema:

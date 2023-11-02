@@ -64,6 +64,16 @@ const router = Router()
  *         schema:
  *           type: number
  *         description: The page size
+ *       - name: sort
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: The field to sort on
+ *       - name: order
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: The order to sort on (ASC or DESC)
  *       - name: drugId
  *         in: query
  *         schema:
@@ -86,11 +96,16 @@ const router = Router()
  *               - 'Generic by posology'
  *               - 'Generic substituable'
  *         description: The filter on the generic type
- *       - name: rank
+ *       - name: rankMin
  *         in: query
  *         schema:
- *           type: string
- *         description: The rank of the drug
+ *           type: number
+ *         description: The minimum rank of the drug
+ *       - name: rankMax
+ *         in: query
+ *         schema:
+ *           type: number
+ *         description: The maximum rank of the drug
  *     responses:
  *       200:
  *         description: A list of drug generic informations

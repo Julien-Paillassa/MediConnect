@@ -6,3 +6,5 @@ export interface PaginationData<Entity extends ObjectLiteral> {
   count: number
   items: Entity[]
 }
+
+export type order = 'ASC' | 'DESC'

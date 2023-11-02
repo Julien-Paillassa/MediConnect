@@ -1,13 +1,17 @@
 import { type NextFunction, type Request as ExpressRequest, type Response as ExpressResponse } from 'express'
 import * as ApiKeyService from '../services/api-key.service'
+import { type order } from 'mediconnect'
 
 // TODO : Replace 1 by the user id from the JWT token
 
 export function list (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
+  const { page, size, sort, order, ...filters } = req.query
   ApiKeyService.list(
-    req.query?.page != null ? parseInt(req.query.page as string) : undefined,
-    req.query?.size != null ? parseInt(req.query.size as string) : undefined,
-    { ...req.query, owner: 1 }
+    page != null ? parseInt(page as string) : undefined,
+    size != null ? parseInt(size as string) : undefined,
+    sort != null ? sort as string : undefined,
+    order != null ? order as order : undefined,
+    { ...filters, owner: 1 }
   )
     .then((data) => res.status(200).send(data))
     .catch((err) => { next(err) })

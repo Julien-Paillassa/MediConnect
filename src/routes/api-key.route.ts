@@ -53,6 +53,16 @@ const router = Router()
  *         schema:
  *           type: number
  *         description: The page size
+ *       - name: sort
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: The field to sort on
+ *       - name: order
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: The order to sort on (ASC or DESC)
  *       - name: name
  *         in: query
  *         schema:

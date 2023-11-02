@@ -1,11 +1,15 @@
 import { type NextFunction, type Request, type Response } from 'express'
-import * as DrugCompositionService from '../services/drug-package.service'
+import * as DrugPackageService from '../services/drug-package.service'
+import { type order } from 'mediconnect'
 
 export function list (req: Request, res: Response, next: NextFunction): void {
-  DrugCompositionService.list(
-    req.query?.page != null ? parseInt(req.query.page as string) : undefined,
-    req.query?.size != null ? parseInt(req.query.size as string) : undefined,
-    req.query
+  const { page, size, sort, order, ...filters } = req.query
+  DrugPackageService.list(
+    page != null ? parseInt(page as string) : undefined,
+    size != null ? parseInt(size as string) : undefined,
+    sort != null ? sort as string : undefined,
+    order != null ? order as order : undefined,
+    filters
   ).then((data) => {
     res.status(200).send(data)
   }).catch((err) => {
@@ -14,7 +18,7 @@ export function list (req: Request, res: Response, next: NextFunction): void {
 }
 
 export function get (req: Request, res: Response, next: NextFunction): void {
-  DrugCompositionService.get(parseInt(req.params.id)).then((data) => {
+  DrugPackageService.get(parseInt(req.params.id)).then((data) => {
     res.status(200).send(data)
   }).catch((err) => {
     next(err)
