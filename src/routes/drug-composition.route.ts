@@ -41,29 +41,23 @@ const router = Router()
  *           description: The substance dosage reference
  *         substanceNature:
  *           type: string
- *           description: The substance nature
+ *           description: The substance nature (SA: Active substance, FT: Theurapeutic moiety)
  *           enum:
- *             - 'Active substance'
- *             - 'Theurapeutic moiety'
+ *             - 'SA'
+ *             - 'FT'
  *         substancesLinkNumber:
  *           type: number
  *           description: TODO
  *       example:
- *         id: 60234100
- *         name: DOLIPRANE 1000 mg, comprimé
- *         form: comprimé
- *         administrations:
- *           - orale
- *         marketingAuthorizationStatus: Autorisation active
- *         marketingAuthorizationProcedure: Procédure nationale
- *         isBeingMarketed: true
- *         marketingAuthorizationDate: 2002-07-09T00:00:00.000Z
- *         ogDbStatus: null
- *         europeanAuthorizationNumber: null
- *         holders:
- *           - OPELLA HEALTHCARE FRANCE
- *         reinforcedMonitoring: false
- *         prescriptionRestriction: null
+ *         id: 33129
+ *         drugId: 60234100
+ *         name: comprimé
+ *         substanceCode: 02202
+ *         substanceName: PARACÉTAMOL
+ *         substanceDosage: 1000 mg
+ *         substanceDosageReference: un comprimé
+ *         substanceNature: SA
+ *         substancesLinkNumber: 1
  */
 
 /**
@@ -131,9 +125,9 @@ const router = Router()
  *           items:
  *             type: string
  *             enum:
- *               - 'Active substance'
- *               - 'Theurapeutic moiety'
- *         description: The filter on the susbtance nature
+ *               - 'SA'
+ *               - 'FT'
+ *         description: The filter on the susbtance nature (SA: Active substance, FT: Theurapeutic moiety)
  *       - name: substancesLinkNumber
  *         in: query
  *         schema:
