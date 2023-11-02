@@ -1,94 +1,33 @@
-import { Request, Response } from 'express';
-import AppDataSource from "../data-source";
-import { User } from '../entity/User';
-import bcrypt from 'bcrypt';
+import { type NextFunction, type Request as ExpressRequest, type Response as ExpressResponse } from 'express'
+import * as UserServices from '../services/user.service'
+import bcrypt from 'bcrypt'
 
-export class UserController {
+export function create (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
+  const password = req.body.password
+  const hashedPassword = bcrypt.hashSync(password, 10)
 
-    // static findAll = async (req: Request, res: Response) => {
-    //     try {
-    //         const userRepository = AppDataSource.manager.find(User);
-    //         const users = await userRepository.find();
-    //         res.json(users);
-    //     } catch (error) {
-    //         res.status(500).send(error);
-    //     }
-    // }
+  UserServices.create({ name: req.body.name, email: req.body.email, password: hashedPassword, subscription: req.body.subscriptionId }).then((user) => {
+    res.status(201).send(user)
+  }
+  ).catch((err) => {
+    next(err)
+  })
+}
 
-    static findById = async (req: Request, res: Response) => {
-        const userId: number = parseInt(req.params.id);
+export function update (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
+  const password = req.body.password
+  const hashedPassword = bcrypt.hashSync(password, 10)
+  UserServices.update(parseInt(req.params.id), { name: req.body.name, email: req.body.email, password: hashedPassword }).then((user) => {
+    res.status(200).send(user)
+  }).catch((err) => {
+    next(err)
+  })
+}
 
-        try {
-            const userRepository = AppDataSource.manager.getRepository(User);
-            const user = await userRepository.findOne({ where: { id: userId } });
-
-            if (!user) {
-                res.status(404).send('User not found');
-                return;
-            }
-
-            res.json(user);
-        } catch (error) {
-            res.status(500).send(error);
-        }
-    }
-
-    static store = async (req: Request, res: Response) => {
-        const { name, password } = req.body;
-        const hashedPassword = bcrypt.hashSync(password, 10);
-
-        const user = new User();
-        user.name = name;
-        user.password = hashedPassword;
-
-        try {
-            const userRepository = AppDataSource.manager.getRepository(User);
-            const savedUser = await userRepository.save(user);
-            res.status(201).json(savedUser);
-        } catch (error) {
-            res.status(500).send(error);
-        }
-    }
-
-    static update = async (req: Request, res: Response) => {
-        const userId: number = parseInt(req.params.id);
-
-        try {
-            const userRepository = AppDataSource.manager.getRepository(User);
-            const user = await userRepository.findOne({ where: { id: userId } });
-
-            if (!user) {
-                res.status(404).send('User not found');
-                return;
-            }
-
-            // Update fields accordingly
-            if (req.body.name) user.name = req.body.name;
-            if (req.body.password) user.password = bcrypt.hashSync(req.body.password, 10);
-
-            const updatedUser = await userRepository.save(user);
-            res.json(updatedUser);
-        } catch (error) {
-            res.status(500).send(error);
-        }
-    }
-
-    static destroy = async (req: Request, res: Response) => {
-        const userId: number = parseInt(req.params.id);
-
-        try {
-            const userRepository = AppDataSource.manager.getRepository(User);
-            const user = await userRepository.findOne({ where: { id: userId } });
-
-            if (!user) {
-                res.status(404).send('User not found');
-                return;
-            }
-
-            await userRepository.remove(user);
-            res.status(200).send('User deleted successfully');
-        } catch (error) {
-            res.status(500).send(error);
-        }
-    }
+export function remove (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
+  UserServices.remove(parseInt(req.params.id)).then(() => {
+    res.status(204).send()
+  }).catch((err) => {
+    next(err)
+  })
 }

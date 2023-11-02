@@ -9,8 +9,12 @@ import drugGenericsRouter from './routes/drug-generic.route'
 import drugSpecificationsRouter from './routes/drug-specification.route'
 import drugPackagesRouter from './routes/drug-package.route'
 import 'reflect-metadata'
+<<<<<<< HEAD
 import * as ResponseMiddleware from './middlewares/response.middleware'
 import * as ApiKeyMiddleware from './middlewares/api-key.middleware'
+=======
+import usersRouter from './routes/user.route'
+>>>>>>> 46250ca (feat: implement user registration)
 
 const app: Express = express()
 app.use(express.json())
@@ -73,8 +77,46 @@ app.use('/drug-specifications', ApiKeyMiddleware.onlyValidApiKey, drugSpecificat
 app.use('/drug-packages', ApiKeyMiddleware.onlyValidApiKey, drugPackagesRouter)
 app.use('/generics', ApiKeyMiddleware.onlyValidApiKey, genericsRouter)
 
+<<<<<<< HEAD
 // error handling
 app.use(ResponseMiddleware.handleErrorResponse)
 app.all('*', ResponseMiddleware.invalidRouteResponse)
+=======
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Endpoint racine
+ *     description: Renvoie un message de bienvenue
+ *     responses:
+ *       200:
+ *         description: Réponse réussie
+ */
+
+app.get('/', (_: Request, res: Response) => {
+  res.send('Hello, Express with TypeScript!!!! ')
+})
+
+app.use('/users', usersRouter)
+
+// Return 404 on unknown route
+app.all('*', (_req: Request, res: Response) => {
+  return res.status(404).send({
+    success: false,
+    message: 'Invalid route'
+  })
+})
+
+// Define a middleware function to handle errors
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.log(err)
+  return res.status(500).send({
+    success: false,
+    message: 'Internal server error'
+  })
+})
+>>>>>>> 46250ca (feat: implement user registration)
 
 export default app
