@@ -1,5 +1,7 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import AppDataSource from '../data-source'
+import { ApiKey } from '../entity/ApiKey'
+import { now } from 'moment'
 
 export function onlyValidApiKey (req: Request, res: Response, next: NextFunction): void {
   const apiKey = req.cookies['X-API-KEY']
@@ -9,8 +11,13 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
       .send({ message: 'Missing API key' })
     return
   }
-  AppDataSource.manager.findOneOrFail('ApiKey', { where: { key: apiKey } })
-    .then(() => { next() })
+  AppDataSource.manager.findOneOrFail(ApiKey, { where: { key: apiKey } })
+    .then((apiKey) => {
+      if (apiKey.expiresAt.getTime() < now()) {
+        res.status(401).send({ message: 'Expired API key' })
+      }
+      next()
+    })
     .catch((err) => {
       if (err.name === 'EntityNotFoundError') {
         res.status(401).send({ message: 'Invalid API key' })
