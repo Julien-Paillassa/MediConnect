@@ -63,3 +63,10 @@ node_modules/
 data/
 
 .DS_Store
+data/
+
+# config vs code
+.vscode
+
+# environnement's variables
+.env

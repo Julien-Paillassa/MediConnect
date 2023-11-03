@@ -9,10 +9,13 @@ import drugGenericsRouter from './routes/drug-generic.route'
 import drugSpecificationsRouter from './routes/drug-specification.route'
 import drugPackagesRouter from './routes/drug-package.route'
 import 'reflect-metadata'
+import userRouter from './routes/user.route'
+import authRouter from './routes/auth.route'
 import * as ResponseMiddleware from './middlewares/response.middleware'
 import * as ApiKeyMiddleware from './middlewares/api-key.middleware'
 
 const app: Express = express()
+app.use(express.json())
 
 app.use(express.json())
 app.use(cookieParser())
@@ -64,6 +67,7 @@ const swaggerUiOptions = {
 // public paths
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
 app.use('/api-keys', apiKeysRouter)
+app.use('/auth', authRouter)
 
 // paths protected by API key
 app.use('/drug-compositions', ApiKeyMiddleware.onlyValidApiKey, drugCompositionsRouter)
@@ -71,9 +75,11 @@ app.use('/drug-generics', ApiKeyMiddleware.onlyValidApiKey, drugGenericsRouter)
 app.use('/drug-specifications', ApiKeyMiddleware.onlyValidApiKey, drugSpecificationsRouter)
 app.use('/drug-packages', ApiKeyMiddleware.onlyValidApiKey, drugPackagesRouter)
 app.use('/generics', ApiKeyMiddleware.onlyValidApiKey, genericsRouter)
+app.use('/user', ApiKeyMiddleware.onlyValidApiKey, userRouter)
 
 // error handling
 app.use(ResponseMiddleware.handleErrorResponse)
 app.all('*', ResponseMiddleware.invalidRouteResponse)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 export default app
