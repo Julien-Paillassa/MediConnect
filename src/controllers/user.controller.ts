@@ -17,7 +17,7 @@ export function create (req: ExpressRequest, res: ExpressResponse, next: NextFun
 export function update (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
   const password = req.body.password
   const hashedPassword = bcrypt.hashSync(password, 10)
-  UserServices.update(parseInt(req.params.id), { name: req.body.name, email: req.body.email, password: hashedPassword }).then((user) => {
+  UserServices.update({ name: req.body.name, email: req.body.email, password: hashedPassword }).then((user) => {
     res.status(200).send(user)
   }).catch((err) => {
     next(err)
@@ -25,7 +25,7 @@ export function update (req: ExpressRequest, res: ExpressResponse, next: NextFun
 }
 
 export function remove (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
-  UserServices.remove(parseInt(req.params.id)).then(() => {
+  UserServices.remove({ id: req.body.id }).then(() => {
     res.status(204).send()
   }).catch((err) => {
     next(err)

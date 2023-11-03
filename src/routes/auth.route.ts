@@ -1,5 +1,5 @@
-import express, { type Request, type Response, type Router } from 'express'
-import * as authCtrl from '../controllers/auth.controller'
+import express, { type Router } from 'express'
+import * as AuthController from '../controllers/auth.controller'
 
 const router: Router = express.Router()
 
@@ -44,7 +44,43 @@ const router: Router = express.Router()
 
 /**
  * @swagger
- * /auth/login:
+ * /auth/sign-up:
+ *   post:
+ *     tags: ['User']
+ *     summary: Create a new user
+ *     description: Create a new user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: User's name
+ *                 example: Toto
+ *               email:
+ *                 type: string
+ *                 description: User's email
+ *                 example: Toto@gmail.com
+ *               password:
+ *                 type: string
+ *                 description: User's password
+ *                 example: azerty
+ *     responses:
+ *       201:
+ *         description: The created user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ */
+router.post('/sign-up', AuthController.signUp)
+
+/**
+ * @swagger
+ * /auth/sign-in:
  *   post:
  *     tags:
  *       - authentication
@@ -76,8 +112,6 @@ const router: Router = express.Router()
  *            $ref: '#/definitions/Error'
  */
 
-router.post('/login', (req: Request, res: Response) => {
-  authCtrl.login(req, res)
-})
+router.post('/sign-in', AuthController.signIn)
 
 export default router

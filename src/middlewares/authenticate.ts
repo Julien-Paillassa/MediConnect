@@ -24,7 +24,7 @@ export function authenticate (req: Request, res: Response, next: NextFunction): 
       if (err != null) {
         res.status(401).send({ statusCode: 401, message: 'You are not authorized to perform this operation!' })
       } else {
-        AppDataSource.manager.findOneByOrFail('User', { where: { id: decoded.id } })
+        AppDataSource.manager.findOne('User', { where: { id: decoded.id } })
           .then((user) => {
             if (user === null) {
               res.status(404).send({ statusCode: 404, message: 'No such user' })
