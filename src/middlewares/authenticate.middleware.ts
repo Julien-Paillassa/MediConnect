@@ -18,12 +18,12 @@ export function authenticate (req: Request, res: Response, next: NextFunction): 
     }
     jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err, decoded: any) => {
       if (err != null) {
-        res.status(401).send({ message: 'You are not authorized to perform this operation!' })
+        res.status(404).send({ message: 'You are not authorized to perform this operation!' })
       } else {
-        AppDataSource.manager.findOneByOrFail('User', { where: { id: decoded.id } })
+        AppDataSource.manager.findOne('User', { where: { id: decoded.id } })
           .then((user) => {
             if (user === null) {
-              res.status(404).send({ message: 'Invalid token' })
+              res.status(401).send({ message: 'Invalid token' })
             } else {
               req.currentUser = user
               next()
@@ -35,6 +35,6 @@ export function authenticate (req: Request, res: Response, next: NextFunction): 
       }
     })
   } else {
-    res.status(403).send({ message: 'Missing toke' })
+    res.status(403).send({ message: 'Missing token' })
   }
 }

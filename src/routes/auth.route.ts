@@ -6,7 +6,7 @@ const router: Router = express.Router()
 /**
  * @swagger
  * tags:
- *   - name: authentication
+ *   - name: Auth
  *     description: User authentication
  */
 
@@ -46,7 +46,7 @@ const router: Router = express.Router()
  * @swagger
  * /auth/sign-up:
  *   post:
- *     tags: ['User']
+ *     tags: ['Auth']
  *     summary: Create a new user
  *     description: Create a new user
  *     requestBody:
@@ -82,8 +82,7 @@ router.post('/sign-up', AuthController.signUp)
  * @swagger
  * /auth/sign-in:
  *   post:
- *     tags:
- *       - authentication
+ *     tags: ['Auth']
  *     summary: Authenticate a user and receive a JWT Token
  *     description:
  *     operationId: login
