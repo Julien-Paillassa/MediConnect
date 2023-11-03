@@ -67,6 +67,7 @@ const swaggerUiOptions = {
 // public paths
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
 app.use('/api-keys', apiKeysRouter)
+app.use('/auth', authRouter)
 
 // paths protected by API key
 app.use('/drug-compositions', ApiKeyMiddleware.onlyValidApiKey, drugCompositionsRouter)
@@ -74,13 +75,11 @@ app.use('/drug-generics', ApiKeyMiddleware.onlyValidApiKey, drugGenericsRouter)
 app.use('/drug-specifications', ApiKeyMiddleware.onlyValidApiKey, drugSpecificationsRouter)
 app.use('/drug-packages', ApiKeyMiddleware.onlyValidApiKey, drugPackagesRouter)
 app.use('/generics', ApiKeyMiddleware.onlyValidApiKey, genericsRouter)
+app.use('/user', ApiKeyMiddleware.onlyValidApiKey, userRouter)
 
 // error handling
 app.use(ResponseMiddleware.handleErrorResponse)
 app.all('*', ResponseMiddleware.invalidRouteResponse)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-
-app.use('/auth', authRouter)
-app.use('/user', userRouter)
 
 export default app
