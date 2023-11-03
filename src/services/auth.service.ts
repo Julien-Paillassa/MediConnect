@@ -25,9 +25,9 @@ export async function signIn (data: DeepPartial<User>): Promise<User> {
   if (data.email !== undefined && data.password !== undefined) {
     const isPasswordValid = bcrypt.compare(user.password, data.password)
 
-    if (isPasswordValid == null) throw new Error('Authentication failed. Invalid password.')
+    if (isPasswordValid == null) throw new CustomError('Invalid password.', 401)
   } else {
-    throw new Error('Authentication failed. Missing email or password.')
+    throw new CustomError('Missing email or password.', 400)
   }
 
   return user

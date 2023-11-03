@@ -80,7 +80,7 @@ const router = Router()
  *       404:
  *         description: User not found
  */
-router.put('/:id', UserController.update)
+router.put('/', UserController.update)
 
 /**
  * @swagger
@@ -95,6 +95,6 @@ router.put('/:id', UserController.update)
  *       404:
  *         description: API key not found
  */
-router.delete('/:id', UserController.remove)
+router.delete('/', UserController.remove)
 
 export default router
