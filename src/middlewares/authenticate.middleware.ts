@@ -2,12 +2,6 @@ import { type Request, type Response, type NextFunction } from 'express'
 import AppDataSource from '../data-source'
 import jwt from 'jsonwebtoken'
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    currentUser?: any
-  }
-}
-
 export function authenticate (req: Request, res: Response, next: NextFunction): void {
   const authorizationHeader = req.headers.authorization
   const token = authorizationHeader?.split(' ')[1]

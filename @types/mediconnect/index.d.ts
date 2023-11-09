@@ -1,4 +1,5 @@
 import { type ObjectLiteral } from 'typeorm'
+import { type User } from 'src/entity/User'
 
 export interface PaginationData<Entity extends ObjectLiteral> {
   total: number
@@ -8,3 +9,9 @@ export interface PaginationData<Entity extends ObjectLiteral> {
 }
 
 export type order = 'ASC' | 'DESC'
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    currentUser?: User
+  }
+}
