@@ -108,7 +108,7 @@ router.post('/sign-up', AuthController.signUp)
  *   post:
  *     tags: ['Auth']
  *     summary: Authenticate a user and receive a JWT Token
- *     description:
+ *     description: Log a user
  *     requestBody:
  *       required: true
  *       content:
