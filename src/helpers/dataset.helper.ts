@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+import https from 'https'
 import moment from 'moment'
 import path from 'path'
 import AppDataSource from '../data-source'
@@ -10,8 +11,14 @@ import { Generic } from '../entity/Generic'
 
 const CHUNK_SIZE = 2500
 
+// =====================================================================================================================
+// ================================================ INTERNAL FUNCTIONS =================================================
+// =====================================================================================================================
+
+const messageWithDots = (message: string): string => message + '.'.repeat(50 - message.length)
+
 const importDrugSpecificationData = async (): Promise<void> => {
-  console.log('Importing drug specification data...')
+  console.log(`[${moment.utc().format()}] Importing drug specification data...`)
   const filePath = path.join(__dirname, '../datasets/CIS_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -36,18 +43,18 @@ const importDrugSpecificationData = async (): Promise<void> => {
         drugSpecification.reinforcedMonitoring = fields[11] === 'Oui'
         await AppDataSource.manager.save(drugSpecification)
       } catch (error) {
-        console.log(`Specification (CIS_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
-        console.log('Continuing...')
+        console.log(`[${moment.utc().format()}] Specification (CIS_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
+        console.log(`[${moment.utc().format()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`Finished importing ${chunkData.length} drug specifications data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug specifications data. Ignored lines: ${ignoredLines}`)
   }
 }
 
 const importDrugPackageData = async (): Promise<void> => {
-  console.log('Importing drug package data...')
+  console.log(`[${moment.utc().format()}] Importing drug package data...`)
   const filePath = path.join(__dirname, '../datasets/CIS_CIP_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -61,7 +68,7 @@ const importDrugPackageData = async (): Promise<void> => {
           id: Number(fields[0])
         })
         if (drugSpecification === null) {
-          console.log(`Package (CIS_CIP_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - Drug specification with id ${fields[0]} not found`)
+          console.log(`[${moment.utc().format()}] Package (CIS_CIP_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - Drug specification with id ${fields[0]} not found`)
           ignoredLines++
           continue
         }
@@ -82,18 +89,18 @@ const importDrugPackageData = async (): Promise<void> => {
         drugPackage.refundInformation = fields[12]
         await AppDataSource.manager.save(drugPackage)
       } catch (error) {
-        console.log(`Package (CIS_CIP_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
-        console.log('Continuing...')
+        console.log(`[${moment.utc().format()}] Package (CIS_CIP_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
+        console.log(`[${moment.utc().format()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`Finished importing ${chunkData.length} drug packages data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug packages data. Ignored lines: ${ignoredLines}`)
   }
 }
 
 const importDrugCompositionData = async (): Promise<void> => {
-  console.log('Importing drug composition data...')
+  console.log(`[${moment.utc().format()}] Importing drug composition data...`)
   const filePath = path.join(__dirname, '../datasets/CIS_COMPO_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -107,7 +114,7 @@ const importDrugCompositionData = async (): Promise<void> => {
           id: Number(fields[0])
         })
         if (drugSpecification === null) {
-          console.log(`Composition (CIS_COMPO_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - Drug specification with id ${fields[0]} not found`)
+          console.log(`[${moment.utc().format()}] Composition (CIS_COMPO_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - Drug specification with id ${fields[0]} not found`)
           ignoredLines++
           continue
         }
@@ -124,18 +131,18 @@ const importDrugCompositionData = async (): Promise<void> => {
 
         await AppDataSource.manager.save(drugComposition)
       } catch (error) {
-        console.log(`Composition (CIS_COMPO_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
-        console.log('Continuing...')
+        console.log(`[${moment.utc().format()}] Composition (CIS_COMPO_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
+        console.log(`[${moment.utc().format()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`Finished importing ${chunkData.length} drug compositions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug compositions data. Ignored lines: ${ignoredLines}`)
   }
 }
 
 const importDrugPrescriptionRestrictionData = async (): Promise<void> => {
-  console.log('Importing drug prescription restriction data...')
+  console.log(`[${moment.utc().format()}] Importing drug prescription restriction data...`)
   const filePath = path.join(__dirname, '../datasets/CIS_CPD_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -149,25 +156,25 @@ const importDrugPrescriptionRestrictionData = async (): Promise<void> => {
           id: Number(fields[0])
         })
         if (drugSpecification === null) {
-          console.log(`Prescription restriction (CIS_CPD_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - Drug specification with id ${fields[0]} not found`)
+          console.log(`[${moment.utc().format()}] Prescription restriction (CIS_CPD_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - Drug specification with id ${fields[0]} not found`)
           ignoredLines++
           continue
         }
         drugSpecification.prescriptionRestriction = fields[1]
         await AppDataSource.manager.save(drugSpecification)
       } catch (error) {
-        console.log(`Prescription restriction (CIS_CPD_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
-        console.log('Continuing...')
+        console.log(`[${moment.utc().format()}] Prescription restriction (CIS_CPD_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
+        console.log(`[${moment.utc().format()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`Finished importing ${chunkData.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
   }
 }
 
 const importGenericData = async (): Promise<void> => {
-  console.log('Importing generic data...')
+  console.log(`[${moment.utc().format()}] Importing generic data...`)
   const filePath = path.join(__dirname, '../datasets/CIS_GENER_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -182,7 +189,7 @@ const importGenericData = async (): Promise<void> => {
           id: Number(fields[2])
         })
         if (drugSpecification === null) {
-          console.log(`Generics (CIS_GENER_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - Drug specification with id ${fields[2]} not found`)
+          console.log(`[${moment.utc().format()}] Generics (CIS_GENER_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - Drug specification with id ${fields[2]} not found`)
           ignoredLines++
           continue
         }
@@ -202,37 +209,137 @@ const importGenericData = async (): Promise<void> => {
         drugGeneric.rank = Number(fields[4])
         await AppDataSource.manager.save(drugGeneric)
       } catch (error) {
-        console.log(`Generics (CIS_GENER_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
-        console.log('Continuing...')
+        console.log(`[${moment.utc().format()}] Generics (CIS_GENER_bdpm.txt, l.${(i * CHUNK_SIZE) + index + 1}) - `, error)
+        console.log(`[${moment.utc().format()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`Finished importing ${chunkData.length} drug generics data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug generics data. Ignored lines: ${ignoredLines}`)
   }
 }
 
-async function importData (): Promise<void> {
-  if (!AppDataSource.manager.connection.isInitialized) {
-    process.stdout.write('Initializing database connection............')
-    await AppDataSource.initialize()
-    process.stdout.write('SUCCESS\n')
+const retrieveDataset = async (fileName: string): Promise<void> => {
+  const url = `https://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=${fileName}`
+  await new Promise<void>((resolve, reject) => {
+    https.get(url, (res) => {
+      const contentDisposition = res.headers['content-disposition']
+      if (contentDisposition == null || !contentDisposition.includes('attachment')) {
+        console.log(`[${moment.utc().format()}] ${fileName} (1): url does not contain a downloadable file`)
+        console.log(`[${moment.utc().format()}] ${fileName} (2): content appears to be "${res.headers['content-type']}"`)
+        console.log(`[${moment.utc().format()}] ${fileName} (3): given url is ${url}`)
+        reject(new Error('Not a downloadable file'))
+        return
+      }
+
+      const filePath = path.join(__dirname, '../datasets', fileName)
+      const fileStream = fs.createWriteStream(filePath)
+      res.pipe(fileStream)
+
+      fileStream.on('finish', () => {
+        fileStream.close()
+        console.log(`[${moment.utc().format()}] ${fileName}: file downloaded.`)
+        resolve()
+      })
+
+      fileStream.on('error', (err) => {
+        console.log(`[${moment.utc().format()}] ${fileName}: failed to download file`)
+        reject(err)
+      })
+    })
+  })
+}
+
+const deletePreviousData = async (): Promise<void> => {
+  const tables = [
+    'drug_composition',
+    'drug_generic',
+    'drug_package',
+    'drug_specification',
+    'generic'
+  ]
+  for (const table of tables) {
+    try {
+      process.stdout.write(`[${moment.utc().format()}] ${messageWithDots(`Deleting previous data from ${table}`)}`)
+      await AppDataSource.manager.query(`DELETE FROM ${table}`)
+      process.stdout.write('SUCCESS\n')
+    } catch (error) {
+      process.stdout.write('FAILED\n')
+    }
   }
+}
+
+// =====================================================================================================================
+// ================================================== MAIN FUNCTIONS ===================================================
+// =====================================================================================================================
+
+async function importData (): Promise<void> {
+  const dbWasInitialized = AppDataSource.manager.connection.isInitialized
+  if (!dbWasInitialized) {
+    process.stdout.write(`[${moment.utc().format()}] ${messageWithDots('Initializing database connection')}`)
+    try {
+      await AppDataSource.initialize()
+      process.stdout.write('SUCCESS\n')
+    } catch (error) {
+      process.stdout.write('FAILED\n')
+      throw error
+    }
+  }
+
   await importDrugSpecificationData()
   await importDrugPackageData()
   await importDrugCompositionData()
   await importDrugPrescriptionRestrictionData()
   await importGenericData()
-}
-void importData()
-  .then(() => { console.info('Data import complete.') })
-  .catch((error) => { console.error('Data import failed: ', error) })
-  .finally(() => {
-    process.stdout.write('Closing database connection............')
-    AppDataSource.manager.connection.destroy().then(() => {
+
+  if (!dbWasInitialized) {
+    process.stdout.write(`[${moment.utc().format()}] ${messageWithDots('Closing database connection')}`)
+    try {
+      await AppDataSource.manager.connection.destroy()
       process.stdout.write('SUCCESS\n')
-    }).catch((error) => {
+    } catch (error) {
       process.stdout.write('FAILED\n')
-      console.error(error)
-    })
-  })
+      throw error
+    }
+  }
+}
+
+async function updateData (): Promise<void> {
+  const dbWasInitialized = AppDataSource.manager.connection.isInitialized
+  if (!dbWasInitialized) {
+    process.stdout.write(`[${moment.utc().format()}] ${messageWithDots('Initializing database connection')}`)
+    try {
+      await AppDataSource.initialize()
+      process.stdout.write('SUCCESS\n')
+    } catch (error) {
+      process.stdout.write('FAILED\n')
+      throw error
+    }
+  }
+
+  await deletePreviousData()
+
+  const datasetsFiles = [
+    'CIS_bdpm.txt',
+    'CIS_CIP_bdpm.txt',
+    'CIS_COMPO_bdpm.txt',
+    'CIS_GENER_bdpm.txt',
+    'CIS_CPD_bdpm.txt'
+  ]
+  await Promise.all(datasetsFiles.map(retrieveDataset))
+
+  await importData()
+
+  if (!dbWasInitialized) {
+    process.stdout.write(`[${moment.utc().format()}] ${messageWithDots('Closing database connection')}`)
+    try {
+      await AppDataSource.manager.connection.destroy()
+      process.stdout.write('SUCCESS\n')
+    } catch (error) {
+      process.stdout.write('FAILED\n')
+      throw error
+    }
+  }
+}
+
+export { importData, updateData }

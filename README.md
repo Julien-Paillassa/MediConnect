@@ -49,9 +49,12 @@ docker cp ./src/scripts/seeds.sql mediconnect-db:/tmp/seeds.sql
 docker exec -it mediconnect-db sh -c 'psql -U postgres -d mediconnect < /tmp/seeds.sql'
 docker exec -it mediconnect-api sh -c 'npm run datasets:import'
 ```
+
 ℹ️ `npm run datasets:import` will import the drug datasets from the `datasets` folder.
+ℹ️ `npm run datasets:update` will retrieve datasets from government API and then import them into the database.
 
 ### Migrations
+
 Inside `mediconnect-api` container:
 
 ```sh
@@ -79,26 +82,28 @@ docker-compose down
 
 ## Linter
 
-- <small>Tester le linter</small>
-
 ```sh
-npx eslint test.ts
+npm run eslint
 ```
 
-- <small> 'npx eslint .' pour tout check</small>
+- <small>`-- --fix` to fix automatically fixable errors</small>
 
 ## Grafana
 
-- <small>User : admin  / mdp : Azerty33!</small>
+```text
+user: admin
+password: Azerty33!
+```
 
 Configurer Grafana :
-    - Search -> Data sources
-    - Add -> PostgreSQL
 
-Ajouter un graph avec Requete : 
-    - Dashboard -> add/edit panel -> Data source : PostgreSQL
-    - Créer sa requête
-    - Save
+- Search -> Data sources
+- Add -> PostgreSQL
+
+Ajouter un graph avec Requete :
+
+- Dashboard -> add/edit panel -> Data source : PostgreSQL
+- Créer sa requête
+- Save
 
 Ajouter un graph avec End Point :
-    -
