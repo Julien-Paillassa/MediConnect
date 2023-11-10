@@ -1,9 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express'
-import { now } from 'moment'
 import AppDataSource from '../data-source'
 import { ApiKey } from '../entity/ApiKey'
-import { limiter, limiterBasic, limiterEnterprise, limiterPro } from '../utils/rateLimiter'
-import { User } from '../entity/User'
+import { rateLimiters } from '../utils/rateLimiter'
 
 export function onlyValidApiKey (req: Request, res: Response, next: NextFunction): void {
   const apiKey = req.cookies['X-API-KEY']
@@ -13,27 +11,34 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
       .send({ message: 'Missing API key' })
     return
   }
-  AppDataSource.manager.findOneOrFail(ApiKey, { where: { key: apiKey }, relations: ['owner'] })
+  AppDataSource.manager
+    .createQueryBuilder(ApiKey, 'apiKey')
+    .innerJoinAndSelect('apiKey.owner', 'owner')
+    .innerJoinAndSelect('owner.subscription', 'subscription')
+    .where('apiKey.key = :apiKey', { apiKey })
+    .andWhere('apiKey.expiresAt > :now', { now: new Date() })
+    .getOneOrFail()
     .then(async (apiKey) => {
-      if (apiKey.expiresAt.getTime() < now()) {
-        res.status(401).send({ message: 'Expired API key' })
+      const ownerId = apiKey.owner.id.toString()
+
+      const rateLimiter = rateLimiters[apiKey.owner.subscription?.plan.name ?? 'default']
+
+      let rateLimiterMsg: string
+
+      if (apiKey.owner.subscription !== undefined) {
+        rateLimiterMsg = `Your subcription is ${apiKey.owner.subscription.plan.name}. You can only make ${apiKey.owner.subscription.plan.ratePerMonth} requests per month !!`
+      } else {
+        rateLimiterMsg = 'You don\'t have subscripion. You have reached the maximum request by default. Please subscribe to one of our subscription.'
       }
 
-      const owner = await AppDataSource.manager.findOneOrFail(User, { where: { email: apiKey.owner.email }, relations: ['subscription'] })
-
-      switch (owner.subscription?.plan.name) {
-        case 'Free':
-          limiterBasic(req, res, () => { next() })
-          break
-        case 'Pro':
-          limiterPro(req, res, () => { next() })
-          break
-        case 'Enterprise':
-          limiterEnterprise(req, res, () => { next() })
-          break
-        default:
-          limiter(req, res, () => { next() })
-      }
+      await rateLimiter.consume(ownerId, 1)
+        .then((rateLimiterRes) => {
+          console.log(rateLimiterRes)
+          next()
+        })
+        .catch((rateLimiterRes) => {
+          res.status(429).send({ message: rateLimiterMsg })
+        })
     })
     .catch((err) => {
       if (err.name === 'EntityNotFoundError') {

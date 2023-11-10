@@ -1,39 +1,29 @@
-import { rateLimit } from 'express-rate-limit'
+import { RateLimiterMemory } from 'rate-limiter-flexible'
 
-export const limiter = rateLimit({
-  windowMs: 2 * 60 * 1000, // 2 min
-  limit: 5,
-  message: 'You can only make 5 requests every 2 min !!',
-  standardHeaders: 'draft-7',
-  legacyHeaders: false
-})
+const opts = {
+  points: 5,
+  // duration: 30 * 24 * 60 * 60 // Per month
+  duration: 30 // Per month
+}
 
-export const limiterBasic = rateLimit({
-  /* windowMs: 30 * 1440 * 60 * 1000, // 30 jours
-  limit: 500, */
-  windowMs: 2 * 60 * 1000,
-  limit: 10,
-  message: 'Your subcription is Basic. You can only make 500 requests per month !!',
-  standardHeaders: 'draft-7',
-  legacyHeaders: false
-})
+const optsBasic = {
+  points: 10,
+  duration: 30
+}
 
-export const limiterPro = rateLimit({
-  /* windowMs: 30 * 1440 * 60 * 1000, // 30 jours
-  limit: 1000, */
-  windowMs: 2 * 60 * 1000,
-  limit: 15,
-  message: 'Your subcription is Pro. You can only make 1000 requests per month !!',
-  standardHeaders: 'draft-7',
-  legacyHeaders: false
-})
+const optsPro = {
+  points: 15,
+  duration: 30
+}
 
-export const limiterEnterprise = rateLimit({
-  /* windowMs: 30 * 1440 * 60 * 1000, // 30 jours
-  limit: 10000, */
-  windowMs: 2 * 60 * 1000,
-  limit: 20,
-  message: 'Your subcription is Entreprise. You can only make 10000 requests per month !!',
-  standardHeaders: 'draft-7',
-  legacyHeaders: false
-})
+const optsEnterprise = {
+  points: 20,
+  duration: 60
+}
+
+export const rateLimiters: Record<string, RateLimiterMemory> = {
+  Basic: new RateLimiterMemory(optsBasic),
+  Pro: new RateLimiterMemory(optsPro),
+  Enterprise: new RateLimiterMemory(optsEnterprise),
+  default: new RateLimiterMemory(opts)
+}
