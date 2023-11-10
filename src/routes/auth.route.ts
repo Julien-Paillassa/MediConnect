@@ -48,7 +48,7 @@ const router: Router = express.Router()
  *   post:
  *     tags: ['Auth']
  *     summary: Create a new user
- *     description: Create a new user
+ *     description: Create a new user with address
  *     requestBody:
  *       required: true
  *       content:
@@ -68,6 +68,29 @@ const router: Router = express.Router()
  *                 type: string
  *                 description: User's password
  *                 example: azerty
+ *               address:
+ *                 type: object
+ *                 properties:
+ *                   city:
+ *                     type: string
+ *                     description: Adresse's city
+ *                     example: Brothers
+ *                   country:
+ *                     type: string
+ *                     description: Adresse's country
+ *                     example: US
+ *                   line1:
+ *                     type: string
+ *                     description: Adresse's line1
+ *                     example: 27 Fredrick Ave
+ *                   postal_code:
+ *                     type: string
+ *                     description: Adresse's postal_code
+ *                     example: 97712
+ *                   state:
+ *                     type: string
+ *                     description: Adresse's state
+ *                     example: CA
  *     responses:
  *       201:
  *         description: The created user
@@ -85,17 +108,21 @@ router.post('/sign-up', AuthController.signUp)
  *     tags: ['Auth']
  *     summary: Authenticate a user and receive a JWT Token
  *     description:
- *     operationId: login
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: body
- *         in: body
- *         required: true
- *         schema:
- *           $ref: '#/definitions/Login'
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User's email
+ *                 example: Toto@gmail.com
+ *               password:
+ *                 type: string
+ *                 description: User's password
+ *                 example: azerty
  *     responses:
  *       200:
  *         description: OK

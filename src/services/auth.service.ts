@@ -3,18 +3,22 @@ import { User } from '../entity/User'
 import AppDataSource from '../data-source'
 import * as bcrypt from 'bcrypt'
 import { CustomError } from '../errors/custom-error'
+import { createCustomer } from '../clients/stripe.client'
+import type Stripe from 'stripe'
 
-export async function signUp (data: DeepPartial<User>): Promise<User> {
+export async function signUp (data: DeepPartial<User> & { address: Stripe.AddressParam }): Promise<User> {
   const existingUser = await AppDataSource.manager.findOne(User, { where: { email: data.email } })
 
   if (existingUser != null) {
     throw new CustomError('User already exists', 409)
   }
 
+  const customer = await createCustomer(data.email as string, data.name as string, data.address)
+  data.id = customer.id
   const user = AppDataSource.manager.create(User, data)
   const saveUser = await AppDataSource.manager.save(user)
 
-  return saveUser as User
+  return saveUser
 }
 
 export async function signIn (data: DeepPartial<User>): Promise<User> {

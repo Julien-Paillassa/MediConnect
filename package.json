@@ -68,7 +68,7 @@
     "pg": "^8.11.3",
     "pg-promise": "^11.5.4",
     "reflect-metadata": "^0.1.13",
-    "stripe": "^13.10.0",
+    "stripe": "^13.11.0",
     "typeorm": "^0.3.17"
   }
 }

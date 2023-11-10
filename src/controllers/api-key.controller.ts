@@ -2,8 +2,6 @@ import { type NextFunction, type Request as ExpressRequest, type Response as Exp
 import * as ApiKeyService from '../services/api-key.service'
 import { type order } from 'mediconnect'
 
-// TODO : Replace 1 by the user id from the JWT token
-
 export function list (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
   const { page, size, sort, order, ...filters } = req.query
   ApiKeyService.list(
@@ -11,23 +9,22 @@ export function list (req: ExpressRequest, res: ExpressResponse, next: NextFunct
     size != null ? parseInt(size as string) : undefined,
     sort != null ? sort as string : undefined,
     order != null ? order as order : undefined,
-    { ...filters, owner: 1 }
+    { ...filters, owner: req.currentUser.id }
   )
     .then((data) => res.status(200).send(data))
     .catch((err) => { next(err) })
 }
 
 export function create (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
-  ApiKeyService.create({ owner: { id: 1 }, name: req.body.name }).then((apiKey) => {
+  ApiKeyService.create({ owner: { id: req.currentUser.id }, name: req.body.name }).then((apiKey) => {
     res.status(201).send(apiKey)
-  }
-  ).catch((err) => {
+  }).catch((err) => {
     next(err)
   })
 }
 
 export function update (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
-  ApiKeyService.update(parseInt(req.params.id), 1, { name: req.body.name }).then((apiKey) => {
+  ApiKeyService.update(parseInt(req.params.id), req.currentUser, { name: req.body.name }).then((apiKey) => {
     res.status(200).send(apiKey)
   }).catch((err) => {
     next(err)
@@ -35,7 +32,7 @@ export function update (req: ExpressRequest, res: ExpressResponse, next: NextFun
 }
 
 export function remove (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
-  ApiKeyService.remove(parseInt(req.params.id), 1).then(() => {
+  ApiKeyService.remove(parseInt(req.params.id), req.currentUser).then(() => {
     res.status(204).send()
   }).catch((err) => {
     next(err)

@@ -1,10 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
-import { User } from './User'
+import { Entity, Column, PrimaryColumn } from 'typeorm'
 
 @Entity()
 export class Subscription {
-  @PrimaryGeneratedColumn()
-    id!: number
+  @PrimaryColumn()
+    id!: string
 
   @Column({ length: 100 })
     name!: string
@@ -17,7 +16,4 @@ export class Subscription {
 
   @Column()
     overageFeePerRequest!: number
-
-  @OneToMany(() => User, (user) => user.subscription)
-    users!: User[]
 }

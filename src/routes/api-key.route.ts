@@ -39,6 +39,8 @@ const router = Router()
  * @swagger
  * /api-keys:
  *   get:
+ *     security:
+ *       - BearerAuth: []
  *     tags: ['Api Key']
  *     summary: Retrieve user's API keys
  *     description: Retrieve user's API keys
@@ -99,6 +101,8 @@ router.get('/', ApiKeyController.list)
  * @swagger
  * /api-keys:
  *   post:
+ *     security:
+ *       - BearerAuth: []
  *     tags: ['Api Key']
  *     summary: Create a new API key
  *     description: Create a new API key
@@ -127,6 +131,8 @@ router.post('/', ApiKeyController.create)
  * @swagger
  * /api-keys/{id}:
  *   put:
+ *     security:
+ *       - BearerAuth: []
  *     tags: ['Api Key']
  *     summary: Update an API key
  *     description: Update an API key
@@ -162,6 +168,8 @@ router.put('/:id', ApiKeyController.update)
  * @swagger
  * /api-keys/{id}:
  *   delete:
+ *     security:
+ *       - BearerAuth: []
  *     tags: ['Api Key']
  *     summary: Delete an API key
  *     description: Delete an API key
