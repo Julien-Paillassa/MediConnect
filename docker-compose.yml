@@ -15,15 +15,12 @@ services:
   mediconnect-api:
     container_name: mediconnect-api
     build: .
+    env_file: 
+      - ./.env.prod
     volumes:
       - .:/usr/src/app
     ports:
       - "3000:3000"
-    environment:
-      DB_SCHEMA: postgres
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_HOST: postgres
     depends_on:
       - mediconnect-db
 

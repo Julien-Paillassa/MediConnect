@@ -70,3 +70,6 @@ data/
 
 # environnement's variables
 .env
+
+# datasets
+src/datasets/new
