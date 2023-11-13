@@ -96,7 +96,7 @@ const parseGenericData = (line: string): ObjectLiteral => {
 
 const importDrugSpecificationData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Importing drug specification data...`)
-  const filePath = path.join(__dirname, '../datasets/old/CIS_bdpm.txt')
+  const filePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_bdpm.txt`)
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
   for (let i = 0; i < data.length; i += CHUNK_SIZE) {
@@ -119,7 +119,7 @@ const importDrugSpecificationData = async (): Promise<void> => {
 
 const importDrugPackageData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Importing drug package data...`)
-  const filePath = path.join(__dirname, '../datasets/old/CIS_CIP_bdpm.txt')
+  const filePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_CIP_bdpm.txt`)
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
   for (let i = 0; i < data.length; i += CHUNK_SIZE) {
@@ -149,7 +149,7 @@ const importDrugPackageData = async (): Promise<void> => {
 
 const importDrugCompositionData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Importing drug composition data...`)
-  const filePath = path.join(__dirname, '../datasets/old/CIS_COMPO_bdpm.txt')
+  const filePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_COMPO_bdpm.txt`)
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
   for (let i = 0; i < data.length; i += CHUNK_SIZE) {
@@ -179,7 +179,7 @@ const importDrugCompositionData = async (): Promise<void> => {
 
 const importDrugPrescriptionRestrictionData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Importing drug prescription restriction data...`)
-  const filePath = path.join(__dirname, '../datasets/old/CIS_CPD_bdpm.txt')
+  const filePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_CPD_bdpm.txt`)
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
   for (let i = 0; i < data.length; i += CHUNK_SIZE) {
@@ -208,7 +208,7 @@ const importDrugPrescriptionRestrictionData = async (): Promise<void> => {
 
 const importGenericData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Importing generic data...`)
-  const filePath = path.join(__dirname, '../datasets/old/CIS_GENER_bdpm.txt')
+  const filePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_GENER_bdpm.txt`)
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
   for (let i = 0; i < data.length; i += CHUNK_SIZE) {
@@ -243,10 +243,10 @@ const importGenericData = async (): Promise<void> => {
 
 const updateDrugSpecificationData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Updating drug specification data...`)
-  const oldFilePath = path.join(__dirname, '../datasets/old/CIS_bdpm.txt')
+  const oldFilePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_bdpm.txt`)
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
-  const newFilePath = path.join(__dirname, '../datasets/new/CIS_bdpm.txt')
+  const newFilePath = path.join(__dirname, `../${process.env.DATASETS_DOWNLOAD_PATH}CIS_bdpm.txt`)
   const newData = fs.readFileSync(newFilePath, 'latin1').split('\n')
   if (newData[newData.length - 1] === '') newData.pop() // remove last empty line
 
@@ -310,10 +310,10 @@ const updateDrugSpecificationData = async (): Promise<void> => {
 
 const updateDrugPackageData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Updating drug package data...`)
-  const oldFilePath = path.join(__dirname, '../datasets/old/CIS_CIP_bdpm.txt')
+  const oldFilePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_CIP_bdpm.txt`)
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
-  const newFilePath = path.join(__dirname, '../datasets/new/CIS_CIP_bdpm.txt')
+  const newFilePath = path.join(__dirname, `../${process.env.DATASETS_DOWNLOAD_PATH}CIS_CIP_bdpm.txt`)
   const newData = fs.readFileSync(newFilePath, 'latin1').split('\n')
   if (newData[newData.length - 1] === '') newData.pop() // remove last empty line
 
@@ -387,10 +387,10 @@ const updateDrugPackageData = async (): Promise<void> => {
 
 const updateDrugCompositionData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Updating drug composition data...`)
-  const oldFilePath = path.join(__dirname, '../datasets/old/CIS_COMPO_bdpm.txt')
+  const oldFilePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_COMPO_bdpm.txt`)
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
-  const newFilePath = path.join(__dirname, '../datasets/new/CIS_COMPO_bdpm.txt')
+  const newFilePath = path.join(__dirname, `../${process.env.DATASETS_DOWNLOAD_PATH}CIS_COMPO_bdpm.txt`)
   const newData = fs.readFileSync(newFilePath, 'latin1').split('\n')
   if (newData[newData.length - 1] === '') newData.pop() // remove last empty line
 
@@ -448,10 +448,10 @@ const updateDrugCompositionData = async (): Promise<void> => {
 
 const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Updating drug prescription restriction data...`)
-  const oldFilePath = path.join(__dirname, '../datasets/old/CIS_CPD_bdpm.txt')
+  const oldFilePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_CPD_bdpm.txt`)
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
-  const newFilePath = path.join(__dirname, '../datasets/new/CIS_CPD_bdpm.txt')
+  const newFilePath = path.join(__dirname, `../${process.env.DATASETS_DOWNLOAD_PATH}CIS_CPD_bdpm.txt`)
   const newData = fs.readFileSync(newFilePath, 'latin1').split('\n')
   if (newData[newData.length - 1] === '') newData.pop() // remove last empty line
 
@@ -526,10 +526,10 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
 
 const updateGenericData = async (): Promise<void> => {
   console.log(`[${moment.utc().toISOString()}] Updating generic data...`)
-  const oldFilePath = path.join(__dirname, '../datasets/old/CIS_GENER_bdpm.txt')
+  const oldFilePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}CIS_GENER_bdpm.txt`)
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
-  const newFilePath = path.join(__dirname, '../datasets/new/CIS_GENER_bdpm.txt')
+  const newFilePath = path.join(__dirname, `../${process.env.DATASETS_DOWNLOAD_PATH}CIS_GENER_bdpm.txt`)
   const newData = fs.readFileSync(newFilePath, 'latin1').split('\n')
   if (newData[newData.length - 1] === '') newData.pop() // remove last empty line
 
@@ -626,13 +626,8 @@ const deleteDrugTables = async (): Promise<void> => {
 // =====================================================================================================================
 
 const retrieveDataset = async (fileName: string): Promise<void> => {
-  const url = `https://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=${fileName}`
-  const newFilePath = path.join(__dirname, '../datasets/new', fileName)
-  const newFileExists = fs.existsSync(newFilePath)
-  if (newFileExists) {
-    const oldFilePath = path.join(__dirname, '../datasets/old', fileName)
-    fs.renameSync(newFilePath, oldFilePath)
-  }
+  const url = `${process.env.DATASETS_DOWNLOAD_URL}${fileName}`
+  const newFilePath = path.join(__dirname, `../${process.env.DATASETS_DOWNLOAD_PATH}`, fileName)
 
   await new Promise<void>((resolve, reject) => {
     https.get(url, (res) => {
@@ -682,8 +677,8 @@ const replaceOldFilesByNewest = async (): Promise<void> => {
     'CIS_CPD_bdpm.txt'
   ]
   for (const fileName of datasetsFiles) {
-    const oldFilePath = path.join(__dirname, '../datasets/old', fileName)
-    const newFilePath = path.join(__dirname, '../datasets/new', fileName)
+    const oldFilePath = path.join(__dirname, `../${process.env.DATASETS_IMPORTED_PATH}`, fileName)
+    const newFilePath = path.join(__dirname, `../${process.env.DATASETS_DOWNLOAD_PATH}`, fileName)
     if (fs.existsSync(newFilePath)) {
       fs.renameSync(newFilePath, oldFilePath)
     }
