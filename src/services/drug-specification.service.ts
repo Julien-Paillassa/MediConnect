@@ -1,6 +1,6 @@
 import { type order, type PaginationData } from 'mediconnect'
 import moment from 'moment'
-import { type DeleteResult, type ObjectId, type ObjectLiteral } from 'typeorm'
+import { type DeepPartial, type DeleteResult, type ObjectId, type ObjectLiteral } from 'typeorm'
 import AppDataSource from '../data-source'
 import { DrugSpecification, type MarketingAuthorizationStatus, type OriginalDatabaseStatus } from '../entity/DrugSpecification'
 import { applyFiltersOnSelectQuery } from '../utils/query'
@@ -53,7 +53,7 @@ export async function save (data: ObjectLiteral): Promise<DrugSpecification> {
   return await AppDataSource.manager.save(drugSpecification)
 }
 
-export async function update (id: number, data: ObjectLiteral): Promise<DrugSpecification> {
+export async function update (id: number, data: DeepPartial<DrugSpecification>): Promise<DrugSpecification> {
   const drugSpecification = AppDataSource.manager.merge(DrugSpecification, await get(id), data)
   return await AppDataSource.manager.save(drugSpecification)
 }

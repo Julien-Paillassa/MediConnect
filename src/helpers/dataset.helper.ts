@@ -498,7 +498,7 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     for (const removed of chunk) {
       try {
-        await DrugSpecificationService.update(removed.drugId, { prescriptionRestriction: null })
+        await DrugSpecificationService.update(removed.drugId, { prescriptionRestriction: '' })
       } catch (error) {
         console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt) - Couldn't delete drug prescription restriction with id ${removed.drugId} :`, error)
         console.log(`[${moment.utc().toISOString()}] Continuing...`)
