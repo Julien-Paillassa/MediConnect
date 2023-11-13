@@ -16,7 +16,7 @@ const AppDataSource = new DataSource({
   migrations: [path.join(__dirname, 'migrations/**/*.{ts,js}')],
   migrationsRun: true,
   synchronize: false,
-  logging: Boolean(process.env.ORM_LOGGING) ?? false,
+  logging: process.env.ORM_LOGGING === 'true',
   subscribers: []
 })
 

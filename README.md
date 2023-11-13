@@ -45,7 +45,7 @@ docker exec -it mediconnect-db psql -U postgres -d mediconnect
 ### Run seeds
 
 ```sh
-docker cp ./src/scripts/seeds.sql mediconnect-db:/tmp/seeds.sql
+docker cp ./src/seeds/seeds.sql mediconnect-db:/tmp/seeds.sql
 docker exec -it mediconnect-db sh -c 'psql -U postgres -d mediconnect < /tmp/seeds.sql'
 docker exec -it mediconnect-api sh -c 'npm run datasets:import'
 ```

@@ -267,8 +267,14 @@ const updateDrugSpecificationData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows.`)
-  console.log(`[${moment.utc().toISOString()}] Detecting updates...`)
+
+  if (changes.removed.length + changes.added.length === 0) {
+    console.log(`[${moment.utc().toISOString()}] Specification - No changes found.`)
+    return
+  }
+
+  console.log(`[${moment.utc().toISOString()}] Specification - Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows.`)
+  console.log(`[${moment.utc().toISOString()}] Specification - Detecting updates...`)
   let updatedLines = 0
   for (const removed of changes.removed) {
     const added = changes.added.find((added) => added.id === removed.id)
@@ -278,16 +284,16 @@ const updateDrugSpecificationData = async (): Promise<void> => {
       updatedLines++
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} drug specifications to remove, ${changes.added.length - updatedLines} drug specifications to add and ${updatedLines} drug specifications to update.`)
-  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Specification - Found ${changes.removed.length} drug specifications to remove, ${changes.added.length - updatedLines} to add and ${updatedLines} to update.`)
+  console.log(`[${moment.utc().toISOString()}] Specification - Processing updates...`)
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     try {
       const result = await DrugSpecificationService.deleteBy(chunk.map((removed) => removed.id))
-      console.log(`[${moment.utc().toISOString()}] Deleted ${result.affected} drug specifications data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
+      console.log(`[${moment.utc().toISOString()}] Specification - Deleted ${result.affected} drug specifications data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
     } catch (error) {
-      console.log(`[${moment.utc().toISOString()}] Specification (CIS_bdpm.txt) - Couldn't delete drug specification (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
-      console.log(`[${moment.utc().toISOString()}] Continuing...`)
+      console.log(`[${moment.utc().toISOString()}] Specification - Specification (CIS_bdpm.txt) - Couldn't delete drug specification (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
+      console.log(`[${moment.utc().toISOString()}] Specification - Continuing...`)
     }
   }
   for (let i = 0; i < changes.added.length; i += CHUNK_SIZE) {
@@ -297,12 +303,12 @@ const updateDrugSpecificationData = async (): Promise<void> => {
       try {
         await DrugSpecificationService.save(added)
       } catch (error) {
-        console.log(`[${moment.utc().toISOString()}] Specification (CIS_bdpm.txt) - Couldn't create drug specification with id ${added.id} :`, error)
-        console.log(`[${moment.utc().toISOString()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Specification - Couldn't create drug specification with id ${added.id} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Specification - Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug specifications data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Specification - Created/updated ${chunk.length} drug specifications data. Ignored lines: ${ignoredLines}`)
   }
 
   console.log(`[${moment.utc().toISOString()}] Finished updating drug specification data.`)
@@ -327,7 +333,7 @@ const updateDrugPackageData = async (): Promise<void> => {
         const data = parseDrugPackageData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().toISOString()}] Package (CIS_CIP_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Package - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -344,8 +350,14 @@ const updateDrugPackageData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
-  console.log(`[${moment.utc().toISOString()}] Detecting updates...`)
+
+  if (changes.removed.length + changes.added.length === 0) {
+    console.log(`[${moment.utc().toISOString()}] Package - No changes found.`)
+    return
+  }
+
+  console.log(`[${moment.utc().toISOString()}] Package - Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
+  console.log(`[${moment.utc().toISOString()}] Package - Detecting updates...`)
   let updatedLines = 0
   for (const removed of changes.removed) {
     const added = changes.added.find((added) => added.id === removed.id)
@@ -355,16 +367,16 @@ const updateDrugPackageData = async (): Promise<void> => {
       updatedLines++
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} drug packages to remove, ${changes.added.length - updatedLines} drug packages to add and ${updatedLines} drug packages to update.`)
-  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Package - Found ${changes.removed.length} drug packages to remove, ${changes.added.length - updatedLines} drug packages to add and ${updatedLines} drug packages to update.`)
+  console.log(`[${moment.utc().toISOString()}] Package - Processing updates...`)
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     try {
       const result = await DrugPackageService.deleteBy(chunk.map((removed) => removed.id))
-      console.log(`[${moment.utc().toISOString()}] Deleted ${result.affected} drug packages data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
+      console.log(`[${moment.utc().toISOString()}] Package - Deleted ${result.affected} drug packages data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
     } catch (error) {
-      console.log(`[${moment.utc().toISOString()}] Package (CIS_CIP_bdpm.txt) - Couldn't delete drug package (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
-      console.log(`[${moment.utc().toISOString()}] Continuing...`)
+      console.log(`[${moment.utc().toISOString()}] Package - Package (CIS_CIP_bdpm.txt) - Couldn't delete drug package (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
+      console.log(`[${moment.utc().toISOString()}] Package - Continuing...`)
       ignoredLines++
     }
   }
@@ -375,12 +387,12 @@ const updateDrugPackageData = async (): Promise<void> => {
       try {
         await DrugPackageService.save(added)
       } catch (error) {
-        console.log(`[${moment.utc().toISOString()}] Package (CIS_CIP_bdpm.txt) - Couldn't create drug package with id ${added.id} :`, error)
-        console.log(`[${moment.utc().toISOString()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Package - Package (CIS_CIP_bdpm.txt) - Couldn't create drug package with id ${added.id} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Package - Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug packages data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Package - Created/updated ${chunk.length} drug packages data. Ignored lines: ${ignoredLines}`)
   }
   console.log(`[${moment.utc().toISOString()}] Finished updating drug package data.`)
 }
@@ -404,7 +416,7 @@ const updateDrugCompositionData = async (): Promise<void> => {
         const data = parseDrugCompositionData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().toISOString()}] Composition (CIS_COMPO_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Composition - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -418,16 +430,22 @@ const updateDrugCompositionData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
-  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
+
+  if (changes.removed.length + changes.added.length === 0) {
+    console.log(`[${moment.utc().toISOString()}] Composition - No changes found.`)
+    return
+  }
+
+  console.log(`[${moment.utc().toISOString()}] Composition - Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
+  console.log(`[${moment.utc().toISOString()}] Composition - Processing updates...`)
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     try {
       const result = await DrugCompositionService.deleteBy(chunk.map((removed) => removed.id))
       console.log(`[${moment.utc().toISOString()}] Deleted ${result.affected} drug compositions data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
     } catch (error) {
-      console.log(`[${moment.utc().toISOString()}] Composition (CIS_COMPO_bdpm.txt) - Couldn't delete drug composition (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
-      console.log(`[${moment.utc().toISOString()}] Continuing...`)
+      console.log(`[${moment.utc().toISOString()}] Composition - Couldn't delete drug composition (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
+      console.log(`[${moment.utc().toISOString()}] Composition - Continuing...`)
     }
   }
   for (let i = 0; i < changes.added.length; i += CHUNK_SIZE) {
@@ -436,12 +454,12 @@ const updateDrugCompositionData = async (): Promise<void> => {
       try {
         await DrugCompositionService.create(added)
       } catch (error) {
-        console.log(`[${moment.utc().toISOString()}] Composition (CIS_COMPO_bdpm.txt) - Couldn't create drug composition with id ${added.id} :`, error)
-        console.log(`[${moment.utc().toISOString()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Composition - Couldn't create drug composition with id ${added.id} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Composition - Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug compositions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Composition - Created/updated ${chunk.length} drug compositions data. Ignored lines: ${ignoredLines}`)
   }
   console.log(`[${moment.utc().toISOString()}] Finished updating drug composition data.`)
 }
@@ -465,7 +483,7 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
         const data = parseDrugPrescriptionRestrictionData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Prescription restriction - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -479,8 +497,14 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
-  console.log(`[${moment.utc().toISOString()}] Detecting updates...`)
+
+  if (changes.removed.length + changes.added.length === 0) {
+    console.log(`[${moment.utc().toISOString()}] Prescription restriction - No changes found.`)
+    return
+  }
+
+  console.log(`[${moment.utc().toISOString()}] Prescription restriction - Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
+  console.log(`[${moment.utc().toISOString()}] Prescription restriction - Detecting updates...`)
   let updatedLines = 0
   for (const removed of changes.removed) {
     const added = changes.added.find((added) => added.drugId === removed.drugId)
@@ -490,8 +514,8 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
       updatedLines++
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} drug prescription restrictions to remove, ${changes.added.length - updatedLines} drug prescription restrictions to add and ${updatedLines} drug prescription restrictions to update.`)
-  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Prescription restriction - Found ${changes.removed.length} drug prescription restrictions to remove, ${changes.added.length - updatedLines} drug prescription restrictions to add and ${updatedLines} drug prescription restrictions to update.`)
+  console.log(`[${moment.utc().toISOString()}] Prescription restriction - Processing updates...`)
   ignoredLines = 0
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     ignoredLines = 0
@@ -500,12 +524,12 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
       try {
         await DrugSpecificationService.update(removed.drugId, { prescriptionRestriction: '' })
       } catch (error) {
-        console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt) - Couldn't delete drug prescription restriction with id ${removed.drugId} :`, error)
-        console.log(`[${moment.utc().toISOString()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Prescription restriction - Couldn't delete drug prescription restriction with id ${removed.drugId} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Prescription restriction - Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().toISOString()}] Deleted ${chunk.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Prescription restriction - Deleted ${chunk.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
   }
   for (let i = 0; i < changes.added.length; i += CHUNK_SIZE) {
     ignoredLines = 0
@@ -514,12 +538,12 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
       try {
         await DrugSpecificationService.update(added.drugId, { prescriptionRestriction: added.prescriptionRestriction })
       } catch (error) {
-        console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt) - Couldn't create drug prescription restriction with id ${added.drugId} :`, error)
-        console.log(`[${moment.utc().toISOString()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Prescription restriction - Couldn't create drug prescription restriction with id ${added.drugId} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Prescription restriction - Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Prescription restriction - Created/updated ${chunk.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
   }
   console.log(`[${moment.utc().toISOString()}] Finished updating drug prescription restriction data.`)
 }
@@ -543,7 +567,7 @@ const updateGenericData = async (): Promise<void> => {
         const data = parseGenericData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().toISOString()}] Generics (CIS_GENER_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Generics - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -558,8 +582,14 @@ const updateGenericData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
-  console.log(`[${moment.utc().toISOString()}] Detecting updates...`)
+
+  if (changes.removed.length + changes.added.length === 0) {
+    console.log(`[${moment.utc().toISOString()}] Generics - No changes found.`)
+    return
+  }
+
+  console.log(`[${moment.utc().toISOString()}] Generics - Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
+  console.log(`[${moment.utc().toISOString()}] Generics - Detecting updates...`)
   let updatedLines = 0
   for (const removed of changes.removed) {
     const added = changes.added.find((added) => added.id === removed.id && added.drugId === removed.drugId)
@@ -569,16 +599,16 @@ const updateGenericData = async (): Promise<void> => {
       updatedLines++
     }
   }
-  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} drug generics to remove, ${changes.added.length - updatedLines} drug generics to add and ${updatedLines} drug generics to update.`)
-  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Generics - Found ${changes.removed.length} drug generics to remove, ${changes.added.length - updatedLines} drug generics to add and ${updatedLines} drug generics to update.`)
+  console.log(`[${moment.utc().toISOString()}] Generics - Processing updates...`)
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     try {
       const result = await DrugGenericService.deleteBy(chunk.map((removed) => removed.id))
-      console.log(`[${moment.utc().toISOString()}] Deleted ${result.affected} drug generics data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
+      console.log(`[${moment.utc().toISOString()}] Generics - Deleted ${result.affected} drug generics data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
     } catch (error) {
-      console.log(`[${moment.utc().toISOString()}] Generics (CIS_GENER_bdpm.txt) - Couldn't delete drug generic (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
-      console.log(`[${moment.utc().toISOString()}] Continuing...`)
+      console.log(`[${moment.utc().toISOString()}] Generics - Couldn't delete drug generic (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
+      console.log(`[${moment.utc().toISOString()}] Generics - Continuing...`)
     }
   }
   for (let i = 0; i < changes.added.length; i += CHUNK_SIZE) {
@@ -588,12 +618,12 @@ const updateGenericData = async (): Promise<void> => {
       try {
         await DrugGenericService.save({ drug: added.drug, generic: added.generic, type: added.type, rank: added.rank })
       } catch (error) {
-        console.log(`[${moment.utc().toISOString()}] Generics (CIS_GENER_bdpm.txt) - Couldn't create drug generic with id ${added.id} :`, error)
-        console.log(`[${moment.utc().toISOString()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Generics - Couldn't create drug generic with id ${added.id} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Generics - Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug generics data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Generics - Created/updated ${chunk.length} drug generics data. Ignored lines: ${ignoredLines}`)
   }
   console.log(`[${moment.utc().toISOString()}] Finished updating drug generics data.`)
 }

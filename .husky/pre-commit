@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
-# . "$(dirname -- "$0")/_/husky.sh"
+. "$(dirname -- "$0")/_/husky.sh"
 
-# npx lint-staged
+npx lint-staged
 
 if git diff --cached --name-only | grep -q "src/datasets/old"; then
   echo "Error: Changes to src/datasets/old are not allowed."
   git restore --staged src/datasets/old
-  git update-index --assume-unchanged src/datasets/old/*
+  git update-index --skip-worktree src/datasets/old/*
   exit 1
 fi
