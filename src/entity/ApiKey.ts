@@ -24,6 +24,6 @@ export class ApiKey {
   @Column({ type: 'timestamptz' })
     expiresAt!: Date
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
     owner!: User
 }

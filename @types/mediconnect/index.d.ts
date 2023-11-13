@@ -15,3 +15,9 @@ declare module 'express-serve-static-core' {
     currentUser?: User
   }
 }
+
+interface Changes {
+  added: ObjectLiteral[]
+  removed: ObjectLiteral[]
+  updated: ObjectLiteral[]
+}

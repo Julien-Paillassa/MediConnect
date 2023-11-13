@@ -24,7 +24,7 @@ export class DrugPackage {
   @Column({ nullable: true })
     drugId?: number
 
-  @ManyToOne(() => DrugSpecification, (drug) => drug.id)
+  @ManyToOne(() => DrugSpecification, (drug) => drug.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'drugId' })
     drug!: DrugSpecification
 
@@ -43,10 +43,10 @@ export class DrugPackage {
   @Column()
     isAgreedToCommunities?: boolean
 
-  @Column({ nullable: true })
+  @Column({ type: 'float', nullable: true })
     refundRate?: number
 
-  @Column({ nullable: true })
+  @Column({ type: 'float', nullable: true })
     price?: number
 
   @Column({ nullable: true })

@@ -1,6 +1,6 @@
+import { type order, type PaginationData } from 'mediconnect'
 import { type ObjectLiteral } from 'typeorm'
 import AppDataSource from '../data-source'
-import { type order, type PaginationData } from 'mediconnect'
 import { Generic } from '../entity/Generic'
 import { applyFiltersOnSelectQuery } from '../utils/query'
 
@@ -24,4 +24,16 @@ export async function list (
 
 export async function get (id: number): Promise<Generic> {
   return await AppDataSource.manager.findOneOrFail(Generic, { where: { id } })
+}
+
+export async function save (data: ObjectLiteral): Promise<Generic> {
+  let generic: Generic
+  try {
+    generic = await get(data.id)
+  } catch (e) {
+    generic = new Generic()
+    generic.id = data.id
+  }
+  generic.name = data.name
+  return await AppDataSource.manager.save(generic)
 }

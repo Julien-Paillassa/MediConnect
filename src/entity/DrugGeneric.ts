@@ -17,14 +17,14 @@ export class DrugGeneric {
   @Column({ nullable: true })
     drugId?: number
 
-  @ManyToOne(() => DrugSpecification, (drug) => drug.id)
+  @ManyToOne(() => DrugSpecification, (drug) => drug.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'drugId' })
     drug!: DrugSpecification
 
   @Column({ nullable: true })
     genericId?: number
 
-  @ManyToOne(() => Generic, (generic) => generic.id)
+  @ManyToOne(() => Generic, (generic) => generic.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'genericId' })
     generic!: Generic
 

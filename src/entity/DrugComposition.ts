@@ -15,7 +15,7 @@ export class DrugComposition {
   @Column({ nullable: true })
     drugId?: number
 
-  @ManyToOne(() => DrugSpecification, (drug) => drug.id)
+  @ManyToOne(() => DrugSpecification, (drug) => drug.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'drugId' })
     drug!: DrugSpecification
 
