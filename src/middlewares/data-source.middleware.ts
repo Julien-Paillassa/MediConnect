@@ -8,7 +8,7 @@ export function dataSourceMiddleware () {
 
     return async (...args: any[]) => {
       if (!dbWasInitialized) {
-        process.stdout.write(`[${moment.utc().format()}] ${messageWithDots('Initializing database connection')}`)
+        process.stdout.write(`[${moment.utc().toISOString()}] ${messageWithDots('Initializing database connection')}`)
         try {
           await AppDataSource.initialize()
           process.stdout.write('SUCCESS\n')
@@ -21,7 +21,7 @@ export function dataSourceMiddleware () {
       const result = await func(...args)
 
       if (!dbWasInitialized) {
-        process.stdout.write(`[${moment.utc().format()}] ${messageWithDots('Closing database connection')}`)
+        process.stdout.write(`[${moment.utc().toISOString()}] ${messageWithDots('Closing database connection')}`)
         try {
           await AppDataSource.manager.connection.destroy()
           process.stdout.write('SUCCESS\n')

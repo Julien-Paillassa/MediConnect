@@ -1,6 +1,6 @@
 import { Command } from 'commander'
-import * as DatasetHelper from './src/helpers/dataset.helper'
-import { dataSourceMiddleware } from './src/middlewares/data-source.middleware'
+import * as DatasetHelper from '../src/helpers/dataset.helper'
+import { dataSourceMiddleware } from '../src/middlewares/data-source.middleware'
 
 const program = new Command()
 const dsMiddleware = dataSourceMiddleware()

@@ -53,6 +53,14 @@ docker exec -it mediconnect-api sh -c 'npm run datasets:import'
 ℹ️ `npm run datasets:import` will import the drug datasets from the `datasets` folder.
 ℹ️ `npm run datasets:update` will retrieve datasets from government API and then import them into the database.
 
+### Run cron jobs
+
+```sh
+docker exec -it mediconnect-api sh -c 'npm run cron:update-datasets'
+```
+
+It will retrieve datasets from government API and then import them into the database every 12 hours.
+
 ### Migrations
 
 Inside `mediconnect-api` container:

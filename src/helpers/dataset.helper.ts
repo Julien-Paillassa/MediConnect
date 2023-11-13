@@ -95,7 +95,7 @@ const parseGenericData = (line: string): ObjectLiteral => {
 // =====================================================================================================================
 
 const importDrugSpecificationData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Importing drug specification data...`)
+  console.log(`[${moment.utc().toISOString()}] Importing drug specification data...`)
   const filePath = path.join(__dirname, '../datasets/old/CIS_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -107,18 +107,18 @@ const importDrugSpecificationData = async (): Promise<void> => {
         const data = parseDrugSpecificationData(line)
         await DrugSpecificationService.save(data)
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Specification (CIS_bdpm.txt, l.${i + index + 1}) - `, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Specification (CIS_bdpm.txt, l.${i + index + 1}) - `, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug specifications data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Finished importing ${chunkData.length} drug specifications data. Ignored lines: ${ignoredLines}`)
   }
 }
 
 const importDrugPackageData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Importing drug package data...`)
+  console.log(`[${moment.utc().toISOString()}] Importing drug package data...`)
   const filePath = path.join(__dirname, '../datasets/old/CIS_CIP_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -130,25 +130,25 @@ const importDrugPackageData = async (): Promise<void> => {
         const data = parseDrugPackageData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().format()}] Package (CIS_CIP_bdpm.txt, l.${i + index + 1}) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Package (CIS_CIP_bdpm.txt, l.${i + index + 1}) - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
 
         await DrugPackageService.save(data)
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Package (CIS_CIP_bdpm.txt, l.${i + index + 1}) - `, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Package (CIS_CIP_bdpm.txt, l.${i + index + 1}) - `, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug packages data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Finished importing ${chunkData.length} drug packages data. Ignored lines: ${ignoredLines}`)
   }
 }
 
 const importDrugCompositionData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Importing drug composition data...`)
+  console.log(`[${moment.utc().toISOString()}] Importing drug composition data...`)
   const filePath = path.join(__dirname, '../datasets/old/CIS_COMPO_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -160,25 +160,25 @@ const importDrugCompositionData = async (): Promise<void> => {
         const data = parseDrugCompositionData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().format()}] Composition (CIS_COMPO_bdpm.txt, l.${i + index + 1}) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Composition (CIS_COMPO_bdpm.txt, l.${i + index + 1}) - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
 
         await DrugCompositionService.create(data)
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Composition (CIS_COMPO_bdpm.txt, l.${i + index + 1}) - `, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Composition (CIS_COMPO_bdpm.txt, l.${i + index + 1}) - `, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug compositions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Finished importing ${chunkData.length} drug compositions data. Ignored lines: ${ignoredLines}`)
   }
 }
 
 const importDrugPrescriptionRestrictionData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Importing drug prescription restriction data...`)
+  console.log(`[${moment.utc().toISOString()}] Importing drug prescription restriction data...`)
   const filePath = path.join(__dirname, '../datasets/old/CIS_CPD_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -190,24 +190,24 @@ const importDrugPrescriptionRestrictionData = async (): Promise<void> => {
         const data = parseDrugPrescriptionRestrictionData(line)
         const drugSpecification = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (drugSpecification === null) {
-          console.log(`[${moment.utc().format()}] Prescription restriction (CIS_CPD_bdpm.txt, l.${i + index + 1}) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt, l.${i + index + 1}) - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
         await DrugSpecificationService.update(drugSpecification.id, { prescriptionRestriction: data.prescriptionRestriction })
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Prescription restriction (CIS_CPD_bdpm.txt, l.${i + index + 1}) - `, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt, l.${i + index + 1}) - `, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Finished importing ${chunkData.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
   }
 }
 
 const importGenericData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Importing generic data...`)
+  console.log(`[${moment.utc().toISOString()}] Importing generic data...`)
   const filePath = path.join(__dirname, '../datasets/old/CIS_GENER_bdpm.txt')
   const data = fs.readFileSync(filePath, 'latin1').split('\n')
   if (data[data.length - 1] === '') data.pop() // remove last empty line
@@ -219,7 +219,7 @@ const importGenericData = async (): Promise<void> => {
         const { generic, drugGeneric } = parseGenericData(line)
         drugGeneric.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: drugGeneric.drugId })
         if (drugGeneric.drug === null) {
-          console.log(`[${moment.utc().format()}] Generics (CIS_GENER_bdpm.txt, l.${i + index + 1}) - Drug specification with id ${drugGeneric.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Generics (CIS_GENER_bdpm.txt, l.${i + index + 1}) - Drug specification with id ${drugGeneric.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -227,13 +227,13 @@ const importGenericData = async (): Promise<void> => {
 
         await DrugGenericService.save({ drug: drugGeneric.drug, generic: drugGeneric.generic, type: drugGeneric.type, rank: drugGeneric.rank })
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Generics (CIS_GENER_bdpm.txt, l.${i + index + 1}) - `, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Generics (CIS_GENER_bdpm.txt, l.${i + index + 1}) - `, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
         continue
       }
     }
-    console.log(`[${moment.utc().format()}] Finished importing ${chunkData.length} drug generics data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Finished importing ${chunkData.length} drug generics data. Ignored lines: ${ignoredLines}`)
   }
 }
 
@@ -242,7 +242,7 @@ const importGenericData = async (): Promise<void> => {
 // =====================================================================================================================
 
 const updateDrugSpecificationData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Updating drug specification data...`)
+  console.log(`[${moment.utc().toISOString()}] Updating drug specification data...`)
   const oldFilePath = path.join(__dirname, '../datasets/old/CIS_bdpm.txt')
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
@@ -267,8 +267,8 @@ const updateDrugSpecificationData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows.`)
-  console.log(`[${moment.utc().format()}] Detecting updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows.`)
+  console.log(`[${moment.utc().toISOString()}] Detecting updates...`)
   let updatedLines = 0
   for (const removed of changes.removed) {
     const added = changes.added.find((added) => added.id === removed.id)
@@ -278,16 +278,16 @@ const updateDrugSpecificationData = async (): Promise<void> => {
       updatedLines++
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} drug specifications to remove, ${changes.added.length - updatedLines} drug specifications to add and ${updatedLines} drug specifications to update.`)
-  console.log(`[${moment.utc().format()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} drug specifications to remove, ${changes.added.length - updatedLines} drug specifications to add and ${updatedLines} drug specifications to update.`)
+  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     try {
       const result = await DrugSpecificationService.deleteBy(chunk.map((removed) => removed.id))
-      console.log(`[${moment.utc().format()}] Deleted ${result.affected} drug specifications data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
+      console.log(`[${moment.utc().toISOString()}] Deleted ${result.affected} drug specifications data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
     } catch (error) {
-      console.log(`[${moment.utc().format()}] Specification (CIS_bdpm.txt) - Couldn't delete drug specification (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
-      console.log(`[${moment.utc().format()}] Continuing...`)
+      console.log(`[${moment.utc().toISOString()}] Specification (CIS_bdpm.txt) - Couldn't delete drug specification (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
+      console.log(`[${moment.utc().toISOString()}] Continuing...`)
     }
   }
   for (let i = 0; i < changes.added.length; i += CHUNK_SIZE) {
@@ -297,19 +297,19 @@ const updateDrugSpecificationData = async (): Promise<void> => {
       try {
         await DrugSpecificationService.save(added)
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Specification (CIS_bdpm.txt) - Couldn't create drug specification with id ${added.id} :`, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Specification (CIS_bdpm.txt) - Couldn't create drug specification with id ${added.id} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().format()}] Created/updated ${chunk.length} drug specifications data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug specifications data. Ignored lines: ${ignoredLines}`)
   }
 
-  console.log(`[${moment.utc().format()}] Finished updating drug specification data.`)
+  console.log(`[${moment.utc().toISOString()}] Finished updating drug specification data.`)
 }
 
 const updateDrugPackageData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Updating drug package data...`)
+  console.log(`[${moment.utc().toISOString()}] Updating drug package data...`)
   const oldFilePath = path.join(__dirname, '../datasets/old/CIS_CIP_bdpm.txt')
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
@@ -327,7 +327,7 @@ const updateDrugPackageData = async (): Promise<void> => {
         const data = parseDrugPackageData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().format()}] Package (CIS_CIP_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Package (CIS_CIP_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -344,8 +344,8 @@ const updateDrugPackageData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
-  console.log(`[${moment.utc().format()}] Detecting updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
+  console.log(`[${moment.utc().toISOString()}] Detecting updates...`)
   let updatedLines = 0
   for (const removed of changes.removed) {
     const added = changes.added.find((added) => added.id === removed.id)
@@ -355,16 +355,16 @@ const updateDrugPackageData = async (): Promise<void> => {
       updatedLines++
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} drug packages to remove, ${changes.added.length - updatedLines} drug packages to add and ${updatedLines} drug packages to update.`)
-  console.log(`[${moment.utc().format()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} drug packages to remove, ${changes.added.length - updatedLines} drug packages to add and ${updatedLines} drug packages to update.`)
+  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     try {
       const result = await DrugPackageService.deleteBy(chunk.map((removed) => removed.id))
-      console.log(`[${moment.utc().format()}] Deleted ${result.affected} drug packages data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
+      console.log(`[${moment.utc().toISOString()}] Deleted ${result.affected} drug packages data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
     } catch (error) {
-      console.log(`[${moment.utc().format()}] Package (CIS_CIP_bdpm.txt) - Couldn't delete drug package (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
-      console.log(`[${moment.utc().format()}] Continuing...`)
+      console.log(`[${moment.utc().toISOString()}] Package (CIS_CIP_bdpm.txt) - Couldn't delete drug package (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
+      console.log(`[${moment.utc().toISOString()}] Continuing...`)
       ignoredLines++
     }
   }
@@ -375,18 +375,18 @@ const updateDrugPackageData = async (): Promise<void> => {
       try {
         await DrugPackageService.save(added)
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Package (CIS_CIP_bdpm.txt) - Couldn't create drug package with id ${added.id} :`, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Package (CIS_CIP_bdpm.txt) - Couldn't create drug package with id ${added.id} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().format()}] Created/updated ${chunk.length} drug packages data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug packages data. Ignored lines: ${ignoredLines}`)
   }
-  console.log(`[${moment.utc().format()}] Finished updating drug package data.`)
+  console.log(`[${moment.utc().toISOString()}] Finished updating drug package data.`)
 }
 
 const updateDrugCompositionData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Updating drug composition data...`)
+  console.log(`[${moment.utc().toISOString()}] Updating drug composition data...`)
   const oldFilePath = path.join(__dirname, '../datasets/old/CIS_COMPO_bdpm.txt')
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
@@ -404,7 +404,7 @@ const updateDrugCompositionData = async (): Promise<void> => {
         const data = parseDrugCompositionData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().format()}] Composition (CIS_COMPO_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Composition (CIS_COMPO_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -418,16 +418,16 @@ const updateDrugCompositionData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
-  console.log(`[${moment.utc().format()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
+  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     try {
       const result = await DrugCompositionService.deleteBy(chunk.map((removed) => removed.id))
-      console.log(`[${moment.utc().format()}] Deleted ${result.affected} drug compositions data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
+      console.log(`[${moment.utc().toISOString()}] Deleted ${result.affected} drug compositions data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
     } catch (error) {
-      console.log(`[${moment.utc().format()}] Composition (CIS_COMPO_bdpm.txt) - Couldn't delete drug composition (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
-      console.log(`[${moment.utc().format()}] Continuing...`)
+      console.log(`[${moment.utc().toISOString()}] Composition (CIS_COMPO_bdpm.txt) - Couldn't delete drug composition (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
+      console.log(`[${moment.utc().toISOString()}] Continuing...`)
     }
   }
   for (let i = 0; i < changes.added.length; i += CHUNK_SIZE) {
@@ -436,18 +436,18 @@ const updateDrugCompositionData = async (): Promise<void> => {
       try {
         await DrugCompositionService.create(added)
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Composition (CIS_COMPO_bdpm.txt) - Couldn't create drug composition with id ${added.id} :`, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Composition (CIS_COMPO_bdpm.txt) - Couldn't create drug composition with id ${added.id} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().format()}] Created/updated ${chunk.length} drug compositions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug compositions data. Ignored lines: ${ignoredLines}`)
   }
-  console.log(`[${moment.utc().format()}] Finished updating drug composition data.`)
+  console.log(`[${moment.utc().toISOString()}] Finished updating drug composition data.`)
 }
 
 const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Updating drug prescription restriction data...`)
+  console.log(`[${moment.utc().toISOString()}] Updating drug prescription restriction data...`)
   const oldFilePath = path.join(__dirname, '../datasets/old/CIS_CPD_bdpm.txt')
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
@@ -465,7 +465,7 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
         const data = parseDrugPrescriptionRestrictionData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().format()}] Prescription restriction (CIS_CPD_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -479,8 +479,8 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
-  console.log(`[${moment.utc().format()}] Detecting updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
+  console.log(`[${moment.utc().toISOString()}] Detecting updates...`)
   let updatedLines = 0
   for (const removed of changes.removed) {
     const added = changes.added.find((added) => added.drugId === removed.drugId)
@@ -490,8 +490,8 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
       updatedLines++
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} drug prescription restrictions to remove, ${changes.added.length - updatedLines} drug prescription restrictions to add and ${updatedLines} drug prescription restrictions to update.`)
-  console.log(`[${moment.utc().format()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} drug prescription restrictions to remove, ${changes.added.length - updatedLines} drug prescription restrictions to add and ${updatedLines} drug prescription restrictions to update.`)
+  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
   ignoredLines = 0
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     ignoredLines = 0
@@ -500,12 +500,12 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
       try {
         await DrugSpecificationService.update(removed.drugId, { prescriptionRestriction: null })
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Prescription restriction (CIS_CPD_bdpm.txt) - Couldn't delete drug prescription restriction with id ${removed.drugId} :`, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt) - Couldn't delete drug prescription restriction with id ${removed.drugId} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().format()}] Deleted ${chunk.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Deleted ${chunk.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
   }
   for (let i = 0; i < changes.added.length; i += CHUNK_SIZE) {
     ignoredLines = 0
@@ -514,18 +514,18 @@ const updateDrugPrescriptionRestrictionData = async (): Promise<void> => {
       try {
         await DrugSpecificationService.update(added.drugId, { prescriptionRestriction: added.prescriptionRestriction })
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Prescription restriction (CIS_CPD_bdpm.txt) - Couldn't create drug prescription restriction with id ${added.drugId} :`, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Prescription restriction (CIS_CPD_bdpm.txt) - Couldn't create drug prescription restriction with id ${added.drugId} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().format()}] Created/updated ${chunk.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug prescription restrictions data. Ignored lines: ${ignoredLines}`)
   }
-  console.log(`[${moment.utc().format()}] Finished updating drug prescription restriction data.`)
+  console.log(`[${moment.utc().toISOString()}] Finished updating drug prescription restriction data.`)
 }
 
 const updateGenericData = async (): Promise<void> => {
-  console.log(`[${moment.utc().format()}] Updating generic data...`)
+  console.log(`[${moment.utc().toISOString()}] Updating generic data...`)
   const oldFilePath = path.join(__dirname, '../datasets/old/CIS_GENER_bdpm.txt')
   const oldData = fs.readFileSync(oldFilePath, 'latin1').split('\n')
   if (oldData[oldData.length - 1] === '') oldData.pop() // remove last empty line
@@ -543,7 +543,7 @@ const updateGenericData = async (): Promise<void> => {
         const data = parseGenericData(line)
         data.drug = await AppDataSource.manager.findOneBy(DrugSpecification, { id: data.drugId })
         if (data.drug === null) {
-          console.log(`[${moment.utc().format()}] Generics (CIS_GENER_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
+          console.log(`[${moment.utc().toISOString()}] Generics (CIS_GENER_bdpm.txt) - Drug specification with id ${data.drugId} not found`)
           ignoredLines++
           continue
         }
@@ -558,8 +558,8 @@ const updateGenericData = async (): Promise<void> => {
       changes.removed = [...changes.removed, ...formattedValue]
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
-  console.log(`[${moment.utc().format()}] Detecting updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} deleted rows and ${changes.added.length} added rows. Ignored lines: ${ignoredLines}`)
+  console.log(`[${moment.utc().toISOString()}] Detecting updates...`)
   let updatedLines = 0
   for (const removed of changes.removed) {
     const added = changes.added.find((added) => added.id === removed.id && added.drugId === removed.drugId)
@@ -569,16 +569,16 @@ const updateGenericData = async (): Promise<void> => {
       updatedLines++
     }
   }
-  console.log(`[${moment.utc().format()}] Found ${changes.removed.length} drug generics to remove, ${changes.added.length - updatedLines} drug generics to add and ${updatedLines} drug generics to update.`)
-  console.log(`[${moment.utc().format()}] Processing updates...`)
+  console.log(`[${moment.utc().toISOString()}] Found ${changes.removed.length} drug generics to remove, ${changes.added.length - updatedLines} drug generics to add and ${updatedLines} drug generics to update.`)
+  console.log(`[${moment.utc().toISOString()}] Processing updates...`)
   for (let i = 0; i < changes.removed.length; i += CHUNK_SIZE) {
     const chunk = changes.removed.slice(i, i + CHUNK_SIZE)
     try {
       const result = await DrugGenericService.deleteBy(chunk.map((removed) => removed.id))
-      console.log(`[${moment.utc().format()}] Deleted ${result.affected} drug generics data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
+      console.log(`[${moment.utc().toISOString()}] Deleted ${result.affected} drug generics data. Ignored lines: ${changes.removed.length - (result.affected ?? 0)}`)
     } catch (error) {
-      console.log(`[${moment.utc().format()}] Generics (CIS_GENER_bdpm.txt) - Couldn't delete drug generic (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
-      console.log(`[${moment.utc().format()}] Continuing...`)
+      console.log(`[${moment.utc().toISOString()}] Generics (CIS_GENER_bdpm.txt) - Couldn't delete drug generic (${chunk.map((removed) => removed.id).join(', ')}) :`, error)
+      console.log(`[${moment.utc().toISOString()}] Continuing...`)
     }
   }
   for (let i = 0; i < changes.added.length; i += CHUNK_SIZE) {
@@ -588,14 +588,14 @@ const updateGenericData = async (): Promise<void> => {
       try {
         await DrugGenericService.save({ drug: added.drug, generic: added.generic, type: added.type, rank: added.rank })
       } catch (error) {
-        console.log(`[${moment.utc().format()}] Generics (CIS_GENER_bdpm.txt) - Couldn't create drug generic with id ${added.id} :`, error)
-        console.log(`[${moment.utc().format()}] Continuing...`)
+        console.log(`[${moment.utc().toISOString()}] Generics (CIS_GENER_bdpm.txt) - Couldn't create drug generic with id ${added.id} :`, error)
+        console.log(`[${moment.utc().toISOString()}] Continuing...`)
         ignoredLines++
       }
     }
-    console.log(`[${moment.utc().format()}] Created/updated ${chunk.length} drug generics data. Ignored lines: ${ignoredLines}`)
+    console.log(`[${moment.utc().toISOString()}] Created/updated ${chunk.length} drug generics data. Ignored lines: ${ignoredLines}`)
   }
-  console.log(`[${moment.utc().format()}] Finished updating drug generics data.`)
+  console.log(`[${moment.utc().toISOString()}] Finished updating drug generics data.`)
 }
 
 // =====================================================================================================================
@@ -612,7 +612,7 @@ const deleteDrugTables = async (): Promise<void> => {
   ]
   for (const table of tables) {
     try {
-      process.stdout.write(`[${moment.utc().format()}] ${messageWithDots(`Deleting previous data from ${table}`)}`)
+      process.stdout.write(`[${moment.utc().toISOString()}] ${messageWithDots(`Deleting previous data from ${table}`)}`)
       await AppDataSource.manager.query(`DELETE FROM ${table}`)
       process.stdout.write('SUCCESS\n')
     } catch (error) {
@@ -638,9 +638,9 @@ const retrieveDataset = async (fileName: string): Promise<void> => {
     https.get(url, (res) => {
       const contentDisposition = res.headers['content-disposition']
       if (contentDisposition == null || !contentDisposition.includes('attachment')) {
-        console.log(`[${moment.utc().format()}] ${fileName} (1): url does not contain a downloadable file`)
-        console.log(`[${moment.utc().format()}] ${fileName} (2): content appears to be "${res.headers['content-type']}"`)
-        console.log(`[${moment.utc().format()}] ${fileName} (3): given url is ${url}`)
+        console.log(`[${moment.utc().toISOString()}] ${fileName} (1): url does not contain a downloadable file`)
+        console.log(`[${moment.utc().toISOString()}] ${fileName} (2): content appears to be "${res.headers['content-type']}"`)
+        console.log(`[${moment.utc().toISOString()}] ${fileName} (3): given url is ${url}`)
         reject(new Error('Not a downloadable file'))
         return
       }
@@ -650,12 +650,12 @@ const retrieveDataset = async (fileName: string): Promise<void> => {
 
       fileStream.on('finish', () => {
         fileStream.close()
-        console.log(`[${moment.utc().format()}] ${fileName}: file downloaded.`)
+        console.log(`[${moment.utc().toISOString()}] ${fileName}: file downloaded.`)
         resolve()
       })
 
       fileStream.on('error', (err) => {
-        console.log(`[${moment.utc().format()}] ${fileName}: failed to download file`)
+        console.log(`[${moment.utc().toISOString()}] ${fileName}: failed to download file`)
         reject(err)
       })
     })
@@ -698,7 +698,7 @@ async function clearData (): Promise<void> {
 
   await deleteDrugTables()
 
-  console.log(`[${moment.utc().format()}] Finished clearing data in ${moment.utc().diff(start, 'seconds', true).toFixed(2)} seconds`)
+  console.log(`[${moment.utc().toISOString()}] Finished clearing data in ${moment.utc().diff(start, 'seconds', true).toFixed(2)} seconds`)
 }
 
 async function importData (): Promise<void> {
@@ -710,7 +710,7 @@ async function importData (): Promise<void> {
   await importDrugPrescriptionRestrictionData()
   await importGenericData()
 
-  console.log(`[${moment.utc().format()}] Finished importing data in ${moment.utc().diff(start, 'seconds', true).toFixed(2)} seconds`)
+  console.log(`[${moment.utc().toISOString()}] Finished importing data in ${moment.utc().diff(start, 'seconds', true).toFixed(2)} seconds`)
 }
 
 async function updateData (): Promise<void> {
@@ -726,7 +726,7 @@ async function updateData (): Promise<void> {
 
   await replaceOldFilesByNewest()
 
-  console.log(`[${moment.utc().format()}] Finished updating data in ${moment.utc().diff(start, 'seconds', true).toFixed(2)} seconds`)
+  console.log(`[${moment.utc().toISOString()}] Finished updating data in ${moment.utc().diff(start, 'seconds', true).toFixed(2)} seconds`)
 }
 
 export { clearData, importData, updateData }
