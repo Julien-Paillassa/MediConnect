@@ -13,7 +13,7 @@ import drugGenericsRouter from './routes/drug-generic.route'
 import drugPackagesRouter from './routes/drug-package.route'
 import drugSpecificationsRouter from './routes/drug-specification.route'
 import genericsRouter from './routes/generic.route'
-import userSubscriptionRouter from './routes/user-subscription.route'
+import SubscriptionRouter from './routes/subscription.route'
 import userRouter from './routes/user.route'
 const app: Express = express()
 app.use(express.json())
@@ -72,7 +72,7 @@ app.use('/auth', authRouter)
 
 // protected path
 app.use('/api-keys', AuthMiddleware.authenticate, apiKeysRouter)
-app.use('/user-subscription', AuthMiddleware.authenticate, userSubscriptionRouter)
+app.use('/subscription', AuthMiddleware.authenticate, SubscriptionRouter)
 
 // paths protected by API key
 app.use('/drug-compositions', ApiKeyMiddleware.onlyValidApiKey, drugCompositionsRouter)

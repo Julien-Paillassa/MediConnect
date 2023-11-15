@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryColumn, OneToMany, ManyToOne } from 'typeorm'
 
 import { ApiKey } from './ApiKey'
-import { UserSubscription } from './UserSubscription'
+import { Subscription } from './Subscription'
 
 @Entity()
 export class User {
@@ -20,6 +20,6 @@ export class User {
   @OneToMany(() => ApiKey, (apiKey) => apiKey.owner)
     apiKeys!: ApiKey[]
 
-  @ManyToOne(() => UserSubscription, (subscription) => subscription.user)
-    subscription!: UserSubscription
+  @ManyToOne(() => Subscription, (subscription) => subscription.user, { nullable: true })
+    subscription?: Subscription
 }

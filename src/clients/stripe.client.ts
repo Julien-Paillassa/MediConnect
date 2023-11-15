@@ -1,3 +1,4 @@
+import { type PostSubscriptionResponse } from 'mediconnect'
 import Stripe from 'stripe'
 
 const stripeApiKey = process.env.STRIPE_SECRET_KEY as string
@@ -35,18 +36,32 @@ async function createPaymentIntent (
 
 async function createSubscription (
   customerId: string,
-  priceId: string): Promise<{ subscriptionId: string, clientSecret: any }> {
+  priceId: string
+): Promise<PostSubscriptionResponse> {
   try {
-    const subscription = await stripe.subscriptions.create({ customer: customerId, items: [{ price: priceId }], payment_behavior: 'default_incomplete', payment_settings: { save_default_payment_method: 'on_subscription' }, expand: ['latest_invoice.payment_intent'] })
+    const subscription = await stripe.subscriptions.create({
+      customer: customerId,
+      items: [{
+        price: priceId
+      }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent']
+    })
 
     if (subscription.latest_invoice == null ||
         typeof subscription.latest_invoice === 'string' ||
         subscription.latest_invoice.payment_intent === null ||
         typeof subscription.latest_invoice.payment_intent === 'string') {
-      throw new Error('')
+      throw new Error('Stripe payment intent creation failed')
     }
 
-    return { subscriptionId: subscription.id, clientSecret: subscription.latest_invoice.payment_intent.client_secret }
+    return {
+      stripe: {
+        subscriptionId: subscription.id,
+        paymentIntentSecret: subscription.latest_invoice.payment_intent.client_secret
+      }
+    }
   } catch (error) {
     throw new Error('Stripe payment intent creation failed')
   }
@@ -60,4 +75,4 @@ async function createCustomer (email: string, name: string, address: Stripe.Addr
   })
 }
 
-export { createSubscription, createPaymentIntent, createCustomer, stripe }
+export { createCustomer, createPaymentIntent, createSubscription, stripe }

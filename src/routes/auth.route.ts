@@ -63,7 +63,7 @@ const router: Router = express.Router()
  *               email:
  *                 type: string
  *                 description: User's email
- *                 example: Toto@gmail.com
+ *                 example: toto@gmail.com
  *               password:
  *                 type: string
  *                 description: User's password
@@ -118,11 +118,11 @@ router.post('/sign-up', AuthController.signUp)
  *               email:
  *                 type: string
  *                 description: User's email
- *                 example: Toto@gmail.com
+ *                 example: john.doe@mediconnect.com
  *               password:
  *                 type: string
  *                 description: User's password
- *                 example: azerty
+ *                 example: 123456
  *     responses:
  *       200:
  *         description: OK

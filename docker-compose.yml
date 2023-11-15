@@ -16,7 +16,7 @@ services:
     container_name: mediconnect-api
     build: .
     env_file: 
-      - ./.env.prod
+      - ./.env.local
     volumes:
       - .:/usr/src/app
     ports:

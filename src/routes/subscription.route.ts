@@ -1,5 +1,5 @@
 import express from 'express'
-import * as UserSubscriptionController from '../controllers/user-subscription.controller'
+import * as SubscriptionController from '../controllers/subscription.controller'
 
 const router = express.Router()
 
@@ -12,7 +12,7 @@ const router = express.Router()
 
 /**
  * @swagger
- * /user-subscription:
+ * /subscription:
  *   post:
  *     security:
  *       - BearerAuth: []
@@ -26,19 +26,34 @@ const router = express.Router()
  *           schema:
  *             type: object
  *             properties:
- *               priceId:
+ *               planId:
  *                 type: string
- *                 description: The priceId of the subscription plain
- *                 example: price_1O826qCuQ03psKfd90pC4r80
+ *                 description: The id (stripe's price id) of the subscription plan
+ *                 example: price_1OCpwpIoREqLVWCHxeAiU2mj
  *     responses:
  *       200:
  *         description: Successfully created a checkout session
  */
-router.post('/', UserSubscriptionController.create)
+router.post('/', SubscriptionController.create)
 
 /**
  * @swagger
- * /user-subscription/webhook:
+ * /subscription:
+ *   delete:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: ['Subscription']
+ *     summary: Cancel subscription
+ *     description: Cancel subscription
+ *     responses:
+ *       200:
+ *         description: Successfully canceled subscription
+ */
+router.delete('/', SubscriptionController.cancel)
+
+/**
+ * @swagger
+ * /subscription/webhook:
  *   post:
  *     tags: ['Subscription']
  *     summary: Handle Stripe webhook
@@ -47,6 +62,6 @@ router.post('/', UserSubscriptionController.create)
  *       200:
  *         description: Successfully handled webhook
  */
-router.post('/webhook', UserSubscriptionController.webhook)
+router.post('/webhook', SubscriptionController.webhook)
 
 export default router
