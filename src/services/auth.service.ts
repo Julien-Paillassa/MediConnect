@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt'
+import * as jwt from 'jsonwebtoken'
 import type Stripe from 'stripe'
 import { type DeepPartial } from 'typeorm'
 import { createCustomer } from '../clients/stripe.client'
@@ -30,7 +31,7 @@ export async function signUp (data: DeepPartial<User> & { address: Stripe.Addres
   return saveUser
 }
 
-export async function signIn (data: DeepPartial<User>): Promise<User> {
+export async function signIn (data: DeepPartial<User>): Promise<string> {
   const user = await AppDataSource.manager.findOneOrFail(User, {
     where: { email: data.email }
   })
@@ -43,5 +44,11 @@ export async function signIn (data: DeepPartial<User>): Promise<User> {
     throw new CustomError('Missing email or password.', 400)
   }
 
-  return user
+  if (process.env.TOKEN_SECRET_KEY == null) {
+    throw new Error('TOKEN_SECRET_KEY is not defined')
+  }
+
+  const token = jwt.sign({ id: user.id, name: user.name }, process.env.TOKEN_SECRET_KEY)
+
+  return token
 }

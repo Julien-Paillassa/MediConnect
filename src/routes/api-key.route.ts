@@ -117,6 +117,10 @@ router.get('/', ApiKeyController.list)
  *                 type: string
  *                 description: The name of the API key
  *                 example: My API Key
+ *               expiresAt:
+ *                 type: string
+ *                 description: The expiration date of the API key
+ *                 example: 2031-12-31 23:59:59
  *     responses:
  *       201:
  *         description: The created API key

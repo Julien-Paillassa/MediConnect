@@ -28,9 +28,15 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
     .leftJoinAndSelect('owner.subscription', 'subscription')
     .leftJoinAndSelect('subscription.plan', 'plan')
     .where('apiKey.key = :apiKey', { apiKey })
-    .andWhere('apiKey.expiresAt > :now', { now: new Date() })
     .getOneOrFail()
     .then(async (apiKey) => {
+      if (apiKey.expiresAt < new Date()) {
+        return res.status(400).send({ message: 'Your API key has expired' })
+      }
+
+      if (apiKey.owner.subscription == null || !apiKey.owner.subscription.active) {
+        return res.status(400).send({ message: 'Your subscription is not active' })
+      }
       const ownerId = apiKey.owner.id.toString()
 
       const rateLimiter = rateLimiters[apiKey.owner.subscription?.plan.name ?? 'default']
@@ -49,14 +55,14 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
             case ((rateLimiter.points / 100) * 50):
               transporter.sendMail({
                 from: process.env.SMTP_AUTH_USER,
-                to: 'julien.paillassa@gmail.com',
+                to: apiKey.owner.email,
                 subject: 'WARNING !',
                 html: `Be carefull ! You only have ${(rateLimiter.points / 100) * 50} requests left before reaching your subscription limit.`
               }, (error, info) => {
                 if (error != null) {
-                  console.error('Erreur lors de l\'envoi de l\'e-mail:', error)
+                  console.error('Error sending email:', error)
                 } else {
-                  console.log('E-mail envoyé:', info.response)
+                  console.log('Email sent:', info.response)
                 }
               })
               next()
@@ -64,14 +70,14 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
             case ((rateLimiter.points / 100) * 10):
               transporter.sendMail({
                 from: process.env.SMTP_AUTH_USER,
-                to: 'julien.paillassa@gmail.com',
+                to: apiKey.owner.email,
                 subject: 'WARNING !',
                 html: `Be carefull ! You only have ${(rateLimiter.points / 100) * 10} requests left before reaching your subscription limit.`
               }, (error, info) => {
                 if (error != null) {
-                  console.error('Erreur lors de l\'envoi de l\'e-mail:', error)
+                  console.error('Error sending email:', error)
                 } else {
-                  console.log('E-mail envoyé:', info.response)
+                  console.log('Email sent:', info.response)
                 }
               })
               next()
@@ -83,15 +89,15 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
         .catch((rateLimiterRes) => {
           transporter.sendMail({
             from: process.env.SMTP_AUTH_USER,
-            to: 'julien.paillassa@gmail.com',
+            to: apiKey.owner.email,
             subject: 'WARNING !',
             text: 'You have reached the request limit available with your subscription',
             html: 'You have reached the request limit available with your subscription'
           }, (error, info) => {
             if (error != null) {
-              console.error('Erreur lors de l\'envoi de l\'e-mail:', error)
+              console.error('Error sending email:', error)
             } else {
-              console.log('E-mail envoyé:', info.response)
+              console.log('Email sent:', info.response)
             }
           })
           res.status(429).send({ message: rateLimiterMsg })

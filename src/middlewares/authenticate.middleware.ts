@@ -14,6 +14,9 @@ export function authenticate (req: Request, res: Response, next: NextFunction): 
       if (err != null) {
         res.status(404).send({ message: 'You are not authorized to perform this operation!' })
       } else {
+        if (decoded.id == null) {
+          res.status(500).send('Unable to decode token')
+        }
         AppDataSource.manager.findOne('User', { where: { id: decoded.id } })
           .then((user) => {
             if (user === null) {
