@@ -66,8 +66,9 @@ const router: Router = express.Router()
  *                 example: toto@gmail.com
  *               password:
  *                 type: string
- *                 description: User's password
- *                 example: azerty
+ *                 description: User's password. Must be at least 8 characters long and include at least one uppercase letter, one digit, and one special character (e.g., !@#$%^&*).
+ *                 pattern: '^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$'
+ *                 example: Azerty!9
  *               address:
  *                 type: object
  *                 properties:
@@ -97,7 +98,7 @@ const router: Router = express.Router()
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/responses/User'
  */
 router.post('/sign-up', AuthController.signUp)
 

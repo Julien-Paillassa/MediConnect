@@ -3,8 +3,18 @@ import * as jwt from 'jsonwebtoken'
 import * as AuthService from '../services/auth.service'
 import bcrypt from 'bcrypt'
 
+function isValidPassword (password: any): boolean {
+  const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/
+  return regex.test(password)
+}
+
 export function signUp (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
-  const { name, email, password, /* planId, */ address } = req.body
+  const { name, email, password, address } = req.body
+
+  if (!isValidPassword(password)) {
+    res.status(400).send({ message: 'Password does not meet the requirements.' })
+  }
+
   const hashedPassword = bcrypt.hashSync(password, 10)
 
   AuthService.signUp({
@@ -13,7 +23,12 @@ export function signUp (req: ExpressRequest, res: ExpressResponse, next: NextFun
     password: hashedPassword,
     address
   }).then((user) => {
-    res.status(201).send(user)
+    const userResponse = {
+      id: user.id,
+      name: user.name,
+      email: user.email
+    }
+    res.status(201).send(userResponse)
   }).catch((err) => {
     next(err)
   })
