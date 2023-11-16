@@ -1,9 +1,9 @@
 import { type order, type PaginationData } from 'mediconnect'
-import { type ObjectLiteral, type DeepPartial } from 'typeorm'
+import { type DeepPartial, type ObjectLiteral } from 'typeorm'
 import AppDataSource from '../data-source'
 import { ApiKey } from '../entity/ApiKey'
-import { applyFiltersOnSelectQuery } from '../utils/query'
 import { type User } from '../entity/User'
+import { applyFiltersOnSelectQuery } from '../utils/query'
 
 export async function list (
   page: number = 0,

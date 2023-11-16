@@ -13,12 +13,13 @@ import drugGenericsRouter from './routes/drug-generic.route'
 import drugPackagesRouter from './routes/drug-package.route'
 import drugSpecificationsRouter from './routes/drug-specification.route'
 import genericsRouter from './routes/generic.route'
+import WebhookRouter from './routes/webhook.route'
 import SubscriptionRouter from './routes/subscription.route'
 import userRouter from './routes/user.route'
-const app: Express = express()
-app.use(express.json())
 
-app.use(express.json())
+const app: Express = express()
+
+app.use(ResponseMiddleware.bodyParse)
 app.use(cookieParser())
 
 const swaggerSpec = swaggerJSDoc({
@@ -69,6 +70,7 @@ const swaggerUiOptions = {
 // public paths
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
 app.use('/auth', authRouter)
+app.use('/webhooks', WebhookRouter)
 
 // protected path
 app.use('/api-keys', AuthMiddleware.authenticate, apiKeysRouter)

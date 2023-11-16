@@ -5,9 +5,12 @@ import { Plan } from './Plan'
 @Entity()
 export class Subscription {
   @PrimaryColumn()
+    id!: string
+
+  @Column()
     userId!: string
 
-  @PrimaryColumn()
+  @Column()
     planId!: string
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })

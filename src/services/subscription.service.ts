@@ -1,138 +1,89 @@
 import { type PostSubscriptionResponse } from 'mediconnect'
-import type Stripe from 'stripe'
+import { type FindOptionsWhere } from 'typeorm'
 import * as StripeClient from '../clients/stripe.client'
 import AppDataSource from '../data-source'
-import { Plan } from '../entity/Plan'
 import { Subscription } from '../entity/Subscription'
 import { type User } from '../entity/User'
+import * as UserService from './user.service'
+import * as PlanService from './plan.service'
+
+export async function get (criteria: FindOptionsWhere<Subscription>): Promise<Subscription> {
+  const subscription = await AppDataSource.manager.findOne(
+    Subscription,
+    { where: criteria }
+  )
+  if (subscription == null) {
+    throw new Error('Subscription not found')
+  }
+  return subscription
+}
 
 export async function subscribe (
   user: User,
   planId: string
 ): Promise<PostSubscriptionResponse> {
-  if (planId == null) {
-    throw new Error('Plan ID is required')
+  if (planId.length === 0) throw new Error('Plan ID is required')
+
+  const plan = await PlanService.get(planId)
+
+  const stripeSubscription = await StripeClient.createSubscription(user.id, plan.id)
+
+  if (stripeSubscription.latest_invoice == null ||
+    typeof stripeSubscription.latest_invoice === 'string' ||
+    stripeSubscription.latest_invoice.payment_intent === null ||
+    typeof stripeSubscription.latest_invoice.payment_intent === 'string') {
+    throw new Error('Stripe payment intent creation failed')
   }
-  const plan = await AppDataSource.manager.findOneOrFail(Plan, {
-    where: { id: planId }
-  })
+
   const subscription = new Subscription()
+  subscription.id = stripeSubscription.id
   subscription.userId = user.id
   subscription.planId = plan.id
   await AppDataSource.manager.save(Subscription, subscription)
-  try {
-    return await StripeClient.createSubscription(user.id, plan.id)
-  } catch (error) {
-    await AppDataSource.manager.remove(subscription)
-    throw error
-  }
-}
 
-export async function cancel (user: User): Promise<void> {
-  // TODO: cancel subscription on Stripe
-  const subscriptions = await AppDataSource.manager.find(
-    Subscription,
-    { where: { userId: user.id } }
-  )
-  await AppDataSource.manager.remove(subscriptions)
-}
-
-export async function webhook (body: string, signature: string): Promise<void> {
-  let event: Stripe.Event
-  try {
-    event = StripeClient.stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_KEY ?? ''
-    )
-
-    const eventType = event.type
-
-    switch (eventType) {
-      case 'invoice.paid':
-        try {
-          const invoice = event.data.object
-
-          if (typeof invoice.subscription !== 'string') {
-            throw new Error('Subscription ID is not a string')
-          }
-
-          const planId = invoice.subscription
-
-          const subscription = await AppDataSource.manager.findOne(
-            Subscription,
-            { where: { planId } }
-          )
-          if (subscription == null) {
-            throw new Error('Subscription not found')
-          }
-
-          subscription.active = true
-          await AppDataSource.manager.save(Subscription, subscription)
-        } catch (error) {
-          console.error('Error processing invoice.paid event:', error)
-          throw new Error('Error while updated subscription')
-        }
-        break
-      case 'invoice.payment_failed':
-        try {
-          const invoice = event.data.object
-
-          if (typeof invoice.subscription !== 'string') {
-            throw new Error('Subscription ID is not a string')
-          }
-
-          const planId = invoice.subscription
-          const subscription = await AppDataSource.manager.findOne(
-            Subscription,
-            { where: { planId } }
-          )
-
-          if (subscription == null) {
-            throw new Error('Subscription not found')
-          }
-
-          subscription.active = false
-          await AppDataSource.manager.save(Subscription, subscription)
-        } catch (error) {
-          console.error(
-            'Error processing invoice.payment_failed event:',
-            error
-          )
-          throw new Error('Error while handling payment failure')
-        }
-        break
-
-      case 'customer.subscription.deleted':
-        try {
-          const subscriptionEvent = event.data.object
-
-          const subscription = await AppDataSource.manager.findOne(
-            Subscription,
-            { where: { planId: subscriptionEvent.id } }
-          )
-
-          if (subscription == null) {
-            throw new Error('User subscription not found')
-          }
-
-          await AppDataSource.manager.remove(
-            Subscription,
-            subscription
-          )
-        } catch (error) {
-          console.error(
-            'Error processing customer.subscription.deleted event:',
-            error
-          )
-          throw new Error('Error while handling subscription deletion')
-        }
-        break
-
-      default:
-        throw new Error(`Unsupported stripe event type : ${eventType}`)
+  return {
+    stripe: {
+      subscriptionId: stripeSubscription.id,
+      paymentIntentSecret: stripeSubscription.latest_invoice.payment_intent.client_secret
     }
-  } catch {
-    throw new Error('A webhook signature verification failed')
   }
+}
+
+export async function activate (id: string, user: string | User): Promise<Subscription | null> {
+  if (typeof user === 'string') {
+    user = await UserService.get(user)
+  }
+
+  const subscription = await get({ id, userId: user.id })
+  if (subscription.active) {
+    return subscription
+  } else {
+    subscription.active = true
+    await AppDataSource.manager.save(Subscription, subscription)
+    return subscription
+  }
+}
+
+export async function deactivate (id: string, user: string | User): Promise<Subscription | null> {
+  if (typeof user === 'string') {
+    user = await UserService.get(user)
+  }
+
+  const subscription = await get({ id, userId: user.id })
+  if (!subscription.active) {
+    return subscription
+  } else {
+    subscription.active = false
+    await AppDataSource.manager.save(Subscription, subscription)
+    return subscription
+  }
+}
+
+export async function cancel (id: string, user: string | User): Promise<void> {
+  if (typeof user === 'string') {
+    user = await UserService.get(user)
+  }
+
+  const subscriptions = await get({ id, userId: user.id })
+  await AppDataSource.manager.remove(subscriptions)
 }

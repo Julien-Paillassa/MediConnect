@@ -36,32 +36,4 @@ const router = express.Router()
  */
 router.post('/', SubscriptionController.create)
 
-/**
- * @swagger
- * /subscription:
- *   delete:
- *     security:
- *       - BearerAuth: []
- *     tags: ['Subscription']
- *     summary: Cancel subscription
- *     description: Cancel subscription
- *     responses:
- *       200:
- *         description: Successfully canceled subscription
- */
-router.delete('/', SubscriptionController.cancel)
-
-/**
- * @swagger
- * /subscription/webhook:
- *   post:
- *     tags: ['Subscription']
- *     summary: Handle Stripe webhook
- *     description: Endpoint for Stripe to send webhook events
- *     responses:
- *       200:
- *         description: Successfully handled webhook
- */
-router.post('/webhook', SubscriptionController.webhook)
-
 export default router

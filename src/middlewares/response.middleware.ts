@@ -1,4 +1,4 @@
-import { type Request, type NextFunction, type Response } from 'express'
+import express, { type Request, type NextFunction, type Response } from 'express'
 
 export function handleErrorResponse (err: any, _req: Request, res: Response, _next: NextFunction): void {
   console.error(err)
@@ -15,4 +15,12 @@ export function handleErrorResponse (err: any, _req: Request, res: Response, _ne
 
 export function invalidRouteResponse (_req: Request, res: Response): void {
   res.status(404).send({ message: 'Invalid route' })
+}
+
+export function bodyParse (req: Request, res: Response, next: NextFunction): void {
+  if (req.originalUrl === '/webhooks/stripe') {
+    next()
+  } else {
+    express.json()(req, res, next)
+  }
 }

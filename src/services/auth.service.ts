@@ -1,10 +1,10 @@
-import { type DeepPartial } from 'typeorm'
-import { User } from '../entity/User'
-import AppDataSource from '../data-source'
 import * as bcrypt from 'bcrypt'
-import { CustomError } from '../errors/custom-error'
-import { createCustomer } from '../clients/stripe.client'
 import type Stripe from 'stripe'
+import { type DeepPartial } from 'typeorm'
+import { createCustomer } from '../clients/stripe.client'
+import AppDataSource from '../data-source'
+import { User } from '../entity/User'
+import { CustomError } from '../errors/custom-error'
 
 export async function signUp (data: DeepPartial<User> & { address: Stripe.AddressParam }): Promise<User> {
   const existingUser = await AppDataSource.manager.findOne(User, { where: { email: data.email } })
