@@ -2,6 +2,17 @@ import { type NextFunction, type Request, type Response } from 'express'
 import AppDataSource from '../data-source'
 import { ApiKey } from '../entity/ApiKey'
 import { rateLimiters } from '../utils/rateLimiter'
+import nodemailer from 'nodemailer'
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_AUTH_USER,
+    pass: process.env.SMTP_AUTH_PWD
+  }
+})
 
 export function onlyValidApiKey (req: Request, res: Response, next: NextFunction): void {
   const apiKey = req.cookies['X-API-KEY']
@@ -14,7 +25,8 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
   AppDataSource.manager
     .createQueryBuilder(ApiKey, 'apiKey')
     .innerJoinAndSelect('apiKey.owner', 'owner')
-    .innerJoinAndSelect('owner.subscription', 'subscription')
+    .leftJoinAndSelect('owner.subscription', 'subscription')
+    .leftJoinAndSelect('subscription.plan', 'plan')
     .where('apiKey.key = :apiKey', { apiKey })
     .andWhere('apiKey.expiresAt > :now', { now: new Date() })
     .getOneOrFail()
@@ -33,10 +45,55 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
 
       await rateLimiter.consume(ownerId, 1)
         .then((rateLimiterRes) => {
-          console.log(rateLimiterRes)
-          next()
+          switch (rateLimiterRes.remainingPoints) {
+            case ((rateLimiter.points / 100) * 50):
+              transporter.sendMail({
+                from: process.env.SMTP_AUTH_USER,
+                to: 'julien.paillassa@gmail.com',
+                subject: 'WARNING !',
+                html: `Be carefull ! You only have ${(rateLimiter.points / 100) * 50} requests left before reaching your subscription limit.`
+              }, (error, info) => {
+                if (error != null) {
+                  console.error('Erreur lors de l\'envoi de l\'e-mail:', error)
+                } else {
+                  console.log('E-mail envoyé:', info.response)
+                }
+              })
+              next()
+              break
+            case ((rateLimiter.points / 100) * 10):
+              transporter.sendMail({
+                from: process.env.SMTP_AUTH_USER,
+                to: 'julien.paillassa@gmail.com',
+                subject: 'WARNING !',
+                html: `Be carefull ! You only have ${(rateLimiter.points / 100) * 10} requests left before reaching your subscription limit.`
+              }, (error, info) => {
+                if (error != null) {
+                  console.error('Erreur lors de l\'envoi de l\'e-mail:', error)
+                } else {
+                  console.log('E-mail envoyé:', info.response)
+                }
+              })
+              next()
+              break
+            default:
+              next()
+          }
         })
         .catch((rateLimiterRes) => {
+          transporter.sendMail({
+            from: process.env.SMTP_AUTH_USER,
+            to: 'julien.paillassa@gmail.com',
+            subject: 'WARNING !',
+            text: 'You have reached the request limit available with your subscription',
+            html: 'You have reached the request limit available with your subscription'
+          }, (error, info) => {
+            if (error != null) {
+              console.error('Erreur lors de l\'envoi de l\'e-mail:', error)
+            } else {
+              console.log('E-mail envoyé:', info.response)
+            }
+          })
           res.status(429).send({ message: rateLimiterMsg })
         })
     })
