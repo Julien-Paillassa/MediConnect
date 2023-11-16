@@ -16,7 +16,7 @@ export function list (req: ExpressRequest, res: ExpressResponse, next: NextFunct
 }
 
 export function create (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
-  ApiKeyService.create({ owner: { id: req.currentUser.id }, name: req.body.name }).then((apiKey) => {
+  ApiKeyService.create({ owner: { id: req.currentUser.id }, ...req.body }).then((apiKey) => {
     res.status(201).send(apiKey)
   }).catch((err) => {
     next(err)

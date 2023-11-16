@@ -1,5 +1,6 @@
 import cookieParser from 'cookie-parser'
 import express, { type Express } from 'express'
+import Prometheus from 'prom-client'
 import 'reflect-metadata'
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
@@ -13,9 +14,13 @@ import drugGenericsRouter from './routes/drug-generic.route'
 import drugPackagesRouter from './routes/drug-package.route'
 import drugSpecificationsRouter from './routes/drug-specification.route'
 import genericsRouter from './routes/generic.route'
-import WebhookRouter from './routes/webhook.route'
 import SubscriptionRouter from './routes/subscription.route'
 import userRouter from './routes/user.route'
+import WebhookRouter from './routes/webhook.route'
+
+const register = new Prometheus.Registry()
+register.setDefaultLabels({ app: 'Mediconnect API' })
+Prometheus.collectDefaultMetrics({ register })
 
 const app: Express = express()
 
@@ -76,9 +81,13 @@ const swaggerUiOptions = {
 }
 
 // public paths
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
 app.use('/auth', authRouter)
 app.use('/webhooks', WebhookRouter)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
+app.get('/metrics', (req, res, next) => {
+  res.setHeader('Content-Type', register.contentType)
+  register.metrics().then(data => res.status(200).send(data)).catch(next)
+})
 
 // protected path
 app.use('/api-keys', AuthMiddleware.authenticate, apiKeysRouter)
@@ -95,6 +104,5 @@ app.use('/user', ApiKeyMiddleware.onlyValidApiKey, userRouter)
 // error handling
 app.use(ResponseMiddleware.handleErrorResponse)
 app.all('*', ResponseMiddleware.invalidRouteResponse)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 export default app

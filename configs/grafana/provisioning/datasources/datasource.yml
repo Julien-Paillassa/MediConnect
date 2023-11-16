@@ -1,0 +1,24 @@
+apiVersion: 1
+
+datasources:
+  - name: "mediconnect-prometheus"
+    type: "prometheus"
+    access: "proxy"
+    url: "http://mediconnect-prometheus:9090"
+    is_default: true
+    basic_auth: false
+    jsonData:
+      httpMethod: POST
+
+  - name: "mediconnect-db"
+    type: "postgres"
+    url: "mediconnect-db:5432"
+    access: proxy
+    user: "postgres"
+    database: mediconnect
+    basic_auth: false
+    is_default: false
+    secureJsonData:
+      password: "postgres"
+    jsonData:
+      sslmode: "disable"

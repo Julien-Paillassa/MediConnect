@@ -23,7 +23,7 @@
     "datasets:clear": "mkdir -p logs && ts-node --transpile-only scripts/commands.ts clear-dataset >> logs/datasets.log",
     "cron:update-datasets": "ts-node --transpile-only scripts/update-datasets-cron.ts",
     "prepare": "husky install",
-    "eslint": "eslint --ext .js,.jsx,.ts,.tsx src --color"
+    "eslint": "eslint --ext .js,.jsx,.ts,.tsx src --color --config configs/linter/.eslintrc.json"
   },
   "lint-staged": {
     "**/*.ts": "npm run eslint -- --fix"
@@ -67,6 +67,7 @@
     "nodemon": "^3.0.1",
     "pg": "^8.11.3",
     "pg-promise": "^11.5.4",
+    "prom-client": "^15.0.0",
     "reflect-metadata": "^0.1.13",
     "stripe": "^13.11.0",
     "typeorm": "^0.3.17"

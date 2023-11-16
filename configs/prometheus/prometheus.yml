@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+          - localhost:9090
+
+  - job_name: node
+    static_configs:
+      - targets:
+          - mediconnect-node-exporter:9100
+
+  - job_name: cadvisor
+    static_configs:
+      - targets:
+          - mediconnect-cadvisor:8080
+
+  - job_name: mediconnect-api
+    static_configs:
+      - targets:
+          - mediconnect-api:3000
