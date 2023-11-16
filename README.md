@@ -100,7 +100,7 @@ npm run eslint
 
 ```text
 user: admin
-password: Azerty33!
+password: password
 ```
 
 Configurer Grafana :

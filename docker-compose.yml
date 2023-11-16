@@ -11,10 +11,14 @@ services:
       POSTGRES_DB: mediconnect
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    networks:
+      - monitoring
 
   mediconnect-api:
     container_name: mediconnect-api
-    build: .
+    build: 
+      context: ./configs/docker/
+      dockerfile: Dockerfile
     env_file: 
       - ./.env.local
     volumes:
@@ -23,15 +27,81 @@ services:
       - "3000:3000"
     depends_on:
       - mediconnect-db
+    networks:
+      - monitoring
 
-  mediconnect-grafana:  
-    container_name: mediconnect-grafana 
+  mediconnect-grafana:
+    container_name: mediconnect-grafana
     image: grafana/grafana:latest
     ports:
       - 3003:3000
+    restart: unless-stopped
     environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
-    - ./data/grafana:/var/lib/grafana
+      - ./data/grafana:/var/lib/grafana
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning
+      - ./configs/grafana/config.ini:/etc/grafana/config.ini
+      - ./configs/grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - mediconnect-api
+    networks:
+      - monitoring
+
+  mediconnect-prometheus:
+    container_name: mediconnect-prometheus
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - ./configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - monitoring
+
+  mediconnect-node-exporter:
+    container_name: mediconnect-node-exporter
+    image: quay.io/prometheus/node-exporter:latest
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - monitoring
+
+  mediconnect-cadvisor:
+    container_name: mediconnect-cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.47.1
+    platform: linux/arm64/v8
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge
