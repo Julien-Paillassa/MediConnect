@@ -6,11 +6,20 @@ import AppDataSource from '../data-source'
 import { User } from '../entity/User'
 import { CustomError } from '../errors/custom-error'
 
+function isValidPassword (password: any): boolean {
+  const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/
+  return regex.test(password)
+}
+
 export async function signUp (data: DeepPartial<User> & { address: Stripe.AddressParam }): Promise<User> {
   const existingUser = await AppDataSource.manager.findOne(User, { where: { email: data.email } })
 
   if (existingUser != null) {
     throw new CustomError('User already exists', 409)
+  }
+
+  if (!isValidPassword(data.password)) {
+    throw new CustomError('Password does not meet the requirements', 400)
   }
 
   const customer = await createCustomer(data.email as string, data.name as string, data.address)

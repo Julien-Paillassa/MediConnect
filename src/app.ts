@@ -55,6 +55,14 @@ const swaggerSpec = swaggerJSDoc({
               description: 'Cookie realm="X-API-KEY"'
             }
           }
+        },
+        User: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: 'cus_P15hb9Ce949BCT' },
+            name: { type: 'string', example: 'Toto' },
+            email: { type: 'string', example: 'toto@gmail.com' }
+          }
         }
       }
     }
