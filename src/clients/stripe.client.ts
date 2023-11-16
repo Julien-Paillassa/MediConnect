@@ -21,3 +21,15 @@ export async function createSubscription (customerId: string, priceId: string): 
 export async function createCustomer (email: string, name: string, address: Stripe.AddressParam): Promise<Stripe.Customer> {
   return await stripe.customers.create({ email, name, address })
 }
+
+export async function updateSubscription (subscriptionId: string, newPriceId: string): Promise<Stripe.Subscription> {
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+  const subscriptionItemId = subscription.items.data[0].id
+
+  return await stripe.subscriptions.update(subscriptionId, {
+    items: [{
+      id: subscriptionItemId,
+      price: newPriceId
+    }]
+  })
+}

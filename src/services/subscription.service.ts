@@ -87,3 +87,21 @@ export async function cancel (id: string, user: string | User): Promise<void> {
   const subscriptions = await get({ id, userId: user.id })
   await AppDataSource.manager.remove(subscriptions)
 }
+
+export async function change (user: User, newPlanId: string): Promise<Subscription> {
+  const currentSubscription = await AppDataSource.manager.findOne(Subscription, {
+    where: { userId: user.id, active: true }
+  })
+
+  if (currentSubscription == null) {
+    throw new Error('Active subscription not found')
+  }
+
+  const newPlan = await PlanService.get(newPlanId)
+  await StripeClient.updateSubscription(currentSubscription.id, newPlan.id)
+
+  currentSubscription.planId = newPlan.id
+  await AppDataSource.manager.save(Subscription, currentSubscription)
+
+  return currentSubscription
+}

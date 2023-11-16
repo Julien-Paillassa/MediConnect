@@ -1,6 +1,7 @@
 import type Stripe from 'stripe'
 import * as StripeClient from '../clients/stripe.client'
 import * as SubscriptionService from './subscription.service'
+import * as UserService from '../services/user.service'
 
 export async function stripe (body: string, signature: unknown): Promise<void> {
   let event: Stripe.Event
@@ -15,7 +16,7 @@ export async function stripe (body: string, signature: unknown): Promise<void> {
     event = StripeClient.stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SIGNING_SECRET ?? 'whsec_ceb66d9e74cb40b02519a505ec3053a87ffa225f1b3345a8980056ed3af56015'
+      process.env.STRIPE_WEBHOOK_SIGNING_SECRET ?? 'whsec_9ec52143ab96e23339945fcd98f04a5ba2e30ad73f3ff60c53125e3ff7a1b20b'
     )
   } catch (error) {
     console.error('Error verifying Stripe webhook signature:', error)
@@ -52,6 +53,24 @@ export async function stripe (body: string, signature: unknown): Promise<void> {
       } catch (error) {
         console.error('Error processing customer.subscription.deleted event:', error)
         throw new Error('Error while deleting subscription')
+      }
+      break
+    case 'customer.subscription.updated':
+      try {
+        const updatedSubscription = event.data.object
+
+        if (typeof updatedSubscription.customer === 'string' && updatedSubscription.items?.data.length > 0) {
+          const subscriptionItem = updatedSubscription.items.data[0]
+          if (subscriptionItem.plan != null) {
+            const user = await UserService.get(updatedSubscription.customer)
+            const planId = subscriptionItem.plan.id
+            await SubscriptionService.change(user, planId)
+            console.log('Subscription plan changed')
+          }
+        }
+      } catch (error) {
+        console.error('Error processing customer.subscription.update event:', error)
+        throw new Error('Error while updating subscription')
       }
       break
       // Uncomment the following code to enable stripe test mode
