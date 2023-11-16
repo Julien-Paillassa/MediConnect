@@ -1,12 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm'
+import { Entity, Column, PrimaryColumn, OneToMany, ManyToOne } from 'typeorm'
 
 import { ApiKey } from './ApiKey'
 import { Subscription } from './Subscription'
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-    id!: number
+  @PrimaryColumn()
+    id!: string
 
   @Column({ length: 100 })
     name!: string
@@ -20,6 +20,6 @@ export class User {
   @OneToMany(() => ApiKey, (apiKey) => apiKey.owner)
     apiKeys!: ApiKey[]
 
-  @ManyToOne(() => Subscription, (subscritpion) => subscritpion.users)
-    subscription!: Subscription
+  @ManyToOne(() => Subscription, (subscription) => subscription.user, { nullable: true })
+    subscription?: Subscription
 }

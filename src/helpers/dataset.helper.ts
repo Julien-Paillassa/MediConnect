@@ -12,7 +12,7 @@ import * as DrugPackageService from '../services/drug-package.service'
 import * as DrugSpecificationService from '../services/drug-specification.service'
 import * as GenericService from '../services/generic.service'
 import { messageWithDots, replaceLastOccurrence } from './string.helper'
-import { type Changes } from '../../@types/mediconnect'
+import { type Changes } from 'mediconnect'
 import { type ObjectLiteral } from 'typeorm'
 
 const CHUNK_SIZE: number = 2500

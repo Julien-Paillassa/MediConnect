@@ -1,23 +1,25 @@
-import express, { type Express } from 'express'
 import cookieParser from 'cookie-parser'
-import swaggerUi from 'swagger-ui-express'
+import express, { type Express } from 'express'
+import 'reflect-metadata'
 import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+import * as ApiKeyMiddleware from './middlewares/api-key.middleware'
+import * as AuthMiddleware from './middlewares/authenticate.middleware'
+import * as ResponseMiddleware from './middlewares/response.middleware'
 import apiKeysRouter from './routes/api-key.route'
-import genericsRouter from './routes/generic.route'
+import authRouter from './routes/auth.route'
 import drugCompositionsRouter from './routes/drug-composition.route'
 import drugGenericsRouter from './routes/drug-generic.route'
-import drugSpecificationsRouter from './routes/drug-specification.route'
 import drugPackagesRouter from './routes/drug-package.route'
-import 'reflect-metadata'
+import drugSpecificationsRouter from './routes/drug-specification.route'
+import genericsRouter from './routes/generic.route'
+import WebhookRouter from './routes/webhook.route'
+import SubscriptionRouter from './routes/subscription.route'
 import userRouter from './routes/user.route'
-import authRouter from './routes/auth.route'
-import * as ResponseMiddleware from './middlewares/response.middleware'
-import * as ApiKeyMiddleware from './middlewares/api-key.middleware'
 
 const app: Express = express()
-app.use(express.json())
 
-app.use(express.json())
+app.use(ResponseMiddleware.bodyParse)
 app.use(cookieParser())
 
 const swaggerSpec = swaggerJSDoc({
@@ -26,9 +28,10 @@ const swaggerSpec = swaggerJSDoc({
     info: { title: 'Mediconnect API', version: '1.0.0' },
     components: {
       securitySchemes: {
-        BasicAuth: {
+        BearerAuth: {
           type: 'http',
-          scheme: 'basic'
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
         }
         /**
          * Unable to use cookie auth with swagger-ui-express,
@@ -66,8 +69,12 @@ const swaggerUiOptions = {
 
 // public paths
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions))
-app.use('/api-keys', apiKeysRouter)
 app.use('/auth', authRouter)
+app.use('/webhooks', WebhookRouter)
+
+// protected path
+app.use('/api-keys', AuthMiddleware.authenticate, apiKeysRouter)
+app.use('/subscription', AuthMiddleware.authenticate, SubscriptionRouter)
 
 // paths protected by API key
 app.use('/drug-compositions', ApiKeyMiddleware.onlyValidApiKey, drugCompositionsRouter)

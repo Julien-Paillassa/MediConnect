@@ -1,23 +1,26 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
+import { Entity, PrimaryColumn, ManyToOne, Column, JoinColumn } from 'typeorm'
 import { User } from './User'
+import { Plan } from './Plan'
 
 @Entity()
 export class Subscription {
-  @PrimaryGeneratedColumn()
-    id!: number
-
-  @Column({ length: 100 })
-    name!: string
+  @PrimaryColumn()
+    id!: string
 
   @Column()
-    price!: number
+    userId!: string
 
   @Column()
-    ratePerMonth!: number
+    planId!: string
 
-  @Column()
-    overageFeePerRequest!: number
+  @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+    user!: User
 
-  @OneToMany(() => User, (user) => user.subscription)
-    users!: User[]
+  @ManyToOne(() => Plan, (plan) => plan.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'planId' })
+    plan!: Plan
+
+  @Column({ nullable: false, default: false })
+    active!: boolean
 }

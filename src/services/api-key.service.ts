@@ -1,7 +1,8 @@
 import { type order, type PaginationData } from 'mediconnect'
-import { type ObjectLiteral, type DeepPartial } from 'typeorm'
+import { type DeepPartial, type ObjectLiteral } from 'typeorm'
 import AppDataSource from '../data-source'
 import { ApiKey } from '../entity/ApiKey'
+import { type User } from '../entity/User'
 import { applyFiltersOnSelectQuery } from '../utils/query'
 
 export async function list (
@@ -27,17 +28,17 @@ export async function create (data: DeepPartial<ApiKey>): Promise<ApiKey> {
   return (await AppDataSource.manager.save(apiKey)) as ApiKey
 }
 
-export async function update (apiKeyId: number, userId: number, data: DeepPartial<ApiKey>): Promise<ApiKey> {
+export async function update (apiKeyId: number, user: User, data: DeepPartial<ApiKey>): Promise<ApiKey> {
   const apiKey = await AppDataSource.manager.findOneOrFail(ApiKey, {
-    where: { id: apiKeyId, owner: { id: userId } }
+    where: { id: apiKeyId, owner: { id: user.id } }
   })
   AppDataSource.manager.merge(ApiKey, apiKey, data)
   return await AppDataSource.manager.save(apiKey)
 }
 
-export async function remove (apiKeyId: number, userId: number): Promise<void> {
+export async function remove (apiKeyId: number, user: User): Promise<void> {
   const apiKey = await AppDataSource.manager.findOneOrFail(ApiKey, {
-    where: { id: apiKeyId, owner: { id: userId } }
+    where: { id: apiKeyId, owner: { id: user.id } }
   })
   await AppDataSource.manager.remove(apiKey)
 }

@@ -1,7 +1,7 @@
-import { type Request, type Response, type NextFunction } from 'express'
+import { type NextFunction, type Request, type Response } from 'express'
+import { now } from 'moment'
 import AppDataSource from '../data-source'
 import { ApiKey } from '../entity/ApiKey'
-import { now } from 'moment'
 
 export function onlyValidApiKey (req: Request, res: Response, next: NextFunction): void {
   const apiKey = req.cookies['X-API-KEY']

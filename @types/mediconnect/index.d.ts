@@ -1,14 +1,15 @@
 import { type ObjectLiteral } from 'typeorm'
 import { type User } from 'src/entity/User'
+import type Stripe from 'stripe'
 
-export interface PaginationData<Entity extends ObjectLiteral> {
+interface PaginationData<Entity extends ObjectLiteral> {
   total: number
   page: number
   count: number
   items: Entity[]
 }
 
-export type order = 'ASC' | 'DESC'
+type order = 'ASC' | 'DESC'
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -20,4 +21,11 @@ interface Changes {
   added: ObjectLiteral[]
   removed: ObjectLiteral[]
   updated: ObjectLiteral[]
+}
+
+interface PostSubscriptionResponse {
+  stripe: {
+    subscriptionId: Stripe.Subscription['id']
+    paymentIntentSecret: Stripe.PaymentIntent['client_secret']
+  }
 }

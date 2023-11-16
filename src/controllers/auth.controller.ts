@@ -4,13 +4,17 @@ import * as AuthService from '../services/auth.service'
 import bcrypt from 'bcrypt'
 
 export function signUp (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void {
-  const password = req.body.password
+  const { name, email, password, /* planId, */ address } = req.body
   const hashedPassword = bcrypt.hashSync(password, 10)
 
-  AuthService.signUp({ name: req.body.name, email: req.body.email, password: hashedPassword, subscription: req.body.subscriptionId }).then((user) => {
+  AuthService.signUp({
+    name,
+    email,
+    password: hashedPassword,
+    address
+  }).then((user) => {
     res.status(201).send(user)
-  }
-  ).catch((err) => {
+  }).catch((err) => {
     next(err)
   })
 }
