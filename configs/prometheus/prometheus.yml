@@ -17,3 +17,8 @@ scrape_configs:
     static_configs:
       - targets:
           - mediconnect-cadvisor:8080
+
+  - job_name: mediconnect-api
+    static_configs:
+      - targets:
+          - mediconnect-api:3000
