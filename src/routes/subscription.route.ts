@@ -38,8 +38,8 @@ router.post('/', SubscriptionController.create)
 
 /**
  * @swagger
- * /subscription/change:
- *   post:
+ * /subscription:
+ *   put:
  *     security:
  *       - BearerAuth: []
  *     tags: ['Subscription']
@@ -62,6 +62,6 @@ router.post('/', SubscriptionController.create)
  *       400:
  *         description: Invalid input or unable to change subscription
  */
-router.post('/change', SubscriptionController.change) // Assurez-vous que la méthode 'change' existe dans SubscriptionController
+router.put('', SubscriptionController.change) // Assurez-vous que la méthode 'change' existe dans SubscriptionController
 
 export default router
