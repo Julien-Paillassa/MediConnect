@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, ManyToOne, Column, JoinColumn } from 'typeorm'
+import { Entity, PrimaryColumn, ManyToOne, OneToOne, Column, JoinColumn } from 'typeorm'
 import { User } from './User'
 import { Plan } from './Plan'
 
@@ -13,7 +13,7 @@ export class Subscription {
   @Column()
     planId!: string
 
-  @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.subscription, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
     user!: User
 

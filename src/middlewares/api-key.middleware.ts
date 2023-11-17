@@ -39,7 +39,7 @@ export function onlyValidApiKey (req: Request, res: Response, next: NextFunction
       }
       const ownerId = apiKey.owner.id.toString()
 
-      const rateLimiter = rateLimiters[apiKey.owner.subscription?.plan.name ?? 'default']
+      const rateLimiter = rateLimiters[apiKey.owner.subscription.plan.name ?? 'default']
 
       let rateLimiterMsg: string
 

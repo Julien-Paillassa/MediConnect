@@ -30,8 +30,8 @@ export async function subscribe (
 
   const subscription = new Subscription()
   subscription.id = stripeSubscription.id
-  subscription.userId = user.id
-  subscription.planId = plan.id
+  subscription.user = user
+  subscription.plan = plan
   await AppDataSource.manager.save(Subscription, subscription)
 
   if (stripeSubscription.latest_invoice == null || typeof stripeSubscription.latest_invoice === 'string') {
