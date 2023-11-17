@@ -21,3 +21,16 @@ export async function createSubscription (customerId: string, priceId: string): 
 export async function createCustomer (email: string, name: string, address: Stripe.AddressParam): Promise<Stripe.Customer> {
   return await stripe.customers.create({ email, name, address })
 }
+
+export async function updateSubscription (subscriptionId: string, priceId: string): Promise<Stripe.Response<Stripe.Subscription>> {
+  try {
+    return await stripe.subscriptions.update(subscriptionId, {
+      items: [{
+        price: priceId
+      }]
+      // expand: ['latest_invoice.payment_intent']
+    })
+  } catch (error) {
+    throw new Error('Stripe subscription update failed')
+  }
+}

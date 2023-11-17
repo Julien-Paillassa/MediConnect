@@ -93,3 +93,34 @@ export async function cancel (id: string, user: string | User): Promise<void> {
   const subscriptions = await get({ id, userId: user.id })
   await AppDataSource.manager.remove(subscriptions)
 }
+
+export async function change (user: User, newPlanId: string): Promise<PostSubscriptionResponse> {
+  const currentSubscription = await AppDataSource.manager.findOne(Subscription, {
+    where: { userId: user.id, active: true }
+  })
+
+  if (currentSubscription == null) {
+    throw new Error('Active subscription not found')
+  }
+
+  const newPlan = await PlanService.get(newPlanId)
+  const stripeSubscription = await StripeClient.updateSubscription(currentSubscription.id, newPlan.id)
+  console.log('stripeSubscription : ', stripeSubscription)
+  if (stripeSubscription.latest_invoice == null ||
+    typeof stripeSubscription.latest_invoice === 'string' ||
+    stripeSubscription.latest_invoice.payment_intent === null ||
+    typeof stripeSubscription.latest_invoice.payment_intent === 'string') {
+    throw new Error('Stripe payment intent creation failed')
+  }
+
+  currentSubscription.planId = newPlan.id
+  currentSubscription.active = false
+  await AppDataSource.manager.save(Subscription, currentSubscription)
+
+  return {
+    stripe: {
+      subscriptionId: stripeSubscription.id,
+      paymentIntentSecret: stripeSubscription.latest_invoice.payment_intent.client_secret
+    }
+  }
+}

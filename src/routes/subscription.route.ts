@@ -36,4 +36,32 @@ const router = express.Router()
  */
 router.post('/', SubscriptionController.create)
 
+/**
+ * @swagger
+ * /subscription:
+ *   put:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: ['Subscription']
+ *     summary: Change subscription plan
+ *     description: Change the subscription plan for the current user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPlanId:
+ *                 type: string
+ *                 description: The ID of the new subscription plan
+ *                 example: price_1OCpwpIoREqLVWCHxeAiU2mj
+ *     responses:
+ *       200:
+ *         description: Subscription successfully updated
+ *       400:
+ *         description: Invalid input or unable to change subscription
+ */
+router.put('', SubscriptionController.change) // Assurez-vous que la méthode 'change' existe dans SubscriptionController
+
 export default router
