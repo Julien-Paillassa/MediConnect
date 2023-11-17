@@ -28,18 +28,24 @@ export async function subscribe (
 
   const stripeSubscription = await StripeClient.createSubscription(user.id, plan.id)
 
-  if (stripeSubscription.latest_invoice == null ||
-    typeof stripeSubscription.latest_invoice === 'string' ||
-    stripeSubscription.latest_invoice.payment_intent === null ||
-    typeof stripeSubscription.latest_invoice.payment_intent === 'string') {
-    throw new Error('Stripe payment intent creation failed')
-  }
-
   const subscription = new Subscription()
   subscription.id = stripeSubscription.id
-  subscription.userId = user.id
-  subscription.planId = plan.id
+  subscription.user = user
+  subscription.plan = plan
   await AppDataSource.manager.save(Subscription, subscription)
+
+  if (stripeSubscription.latest_invoice == null || typeof stripeSubscription.latest_invoice === 'string') {
+    throw new Error('Stripe payment intent creation failed: latest_invoice format is invalid')
+  } else if (stripeSubscription.latest_invoice.amount_due === 0) {
+    return {
+      stripe: {
+        subscriptionId: stripeSubscription.id,
+        paymentIntentSecret: null
+      }
+    }
+  } else if (stripeSubscription.latest_invoice.payment_intent === null || typeof stripeSubscription.latest_invoice.payment_intent === 'string') {
+    throw new Error('Stripe payment intent creation failed: payment_intent format is invalid or missing')
+  }
 
   return {
     stripe: {

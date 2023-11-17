@@ -63,7 +63,7 @@ const router: Router = express.Router()
  *               email:
  *                 type: string
  *                 description: User's email
- *                 example: toto@gmail.com
+ *                 example: julien.paillassa@gmail.com
  *               password:
  *                 type: string
  *                 description: User's password. Must be at least 8 characters long and include at least one uppercase letter, one digit, and one special character (e.g., !@#$%^&*).
@@ -108,7 +108,7 @@ router.post('/sign-up', AuthController.signUp)
  *   post:
  *     tags: ['Auth']
  *     summary: Authenticate a user and receive a JWT Token
- *     description:
+ *     description: Log a user
  *     requestBody:
  *       required: true
  *       content:
@@ -119,11 +119,11 @@ router.post('/sign-up', AuthController.signUp)
  *               email:
  *                 type: string
  *                 description: User's email
- *                 example: john.doe@mediconnect.com
+ *                 example: julien.paillassa@gmail.com
  *               password:
  *                 type: string
  *                 description: User's password
- *                 example: 123456
+ *                 example: azerty
  *     responses:
  *       200:
  *         description: OK
